@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useMatches } from 'react-router-dom'
 import { href, t, ui, type Locale } from '../i18n'
 import { EVENT } from '../content/site'
-import { Btn, LocaleCtx } from './ui'
+import { LocaleCtx } from './ui'
 
 export type RouteHandle = { alt: Record<Locale, string>; plain?: boolean }
 
@@ -19,15 +19,7 @@ export default function Layout({ locale }: { locale: Locale }) {
   )
 }
 
-function Wordmark({ light = false }: { light?: boolean }) {
-  return (
-    <span className={`wordmark ${light ? 'wordmark--light' : ''}`}>
-      <span className="wordmark__main">Beauty&nbsp;&amp;&nbsp;Hair</span>
-      <span className="wordmark__sub">Expo · Rzeszów</span>
-    </span>
-  )
-}
-
+/** Cienki pasek z linkami tekstowymi, jak w referencji. */
 function Header({ locale: l }: { locale: Locale }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
@@ -35,11 +27,10 @@ function Header({ locale: l }: { locale: Locale }) {
   const matches = useMatches()
   const handle = matches.at(-1)?.handle as RouteHandle | undefined
   const alt = handle?.alt
-  // strony bez zdjęcia na górze — pasek od razu jasny
-  const solid = scrolled || !!handle?.plain
+  const isHome = /^\/(en\/?)?$/.test(pathname)
 
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 40)
+    const on = () => setScrolled(window.scrollY > 24)
     on()
     window.addEventListener('scroll', on, { passive: true })
     return () => window.removeEventListener('scroll', on)
@@ -49,11 +40,13 @@ function Header({ locale: l }: { locale: Locale }) {
     document.documentElement.classList.toggle('menu-open', open)
   }, [open])
 
-  const links = [
-    { to: href(l, 'about'), label: t(ui.nav.about, l) },
+  const left = [
     { to: href(l, 'program'), label: t(ui.nav.program, l) },
     { to: href(l, 'tickets'), label: t(ui.nav.tickets, l) },
     { to: href(l, 'exhibitors'), label: t(ui.nav.exhibitors, l) },
+    { to: href(l, 'about'), label: t(ui.nav.about, l) },
+  ]
+  const right = [
     { to: href(l, 'partners'), label: t(ui.nav.partners, l) },
     { to: href(l, 'news'), label: t(ui.nav.news, l) },
     { to: href(l, 'contact'), label: t(ui.nav.contact, l) },
@@ -61,51 +54,56 @@ function Header({ locale: l }: { locale: Locale }) {
   const other: Locale = l === 'pl' ? 'en' : 'pl'
 
   return (
-    <header className={`hdr ${solid ? 'hdr--solid' : ''} ${open ? 'hdr--open' : ''}`}>
+    <header className={`hdr ${scrolled ? 'hdr--solid' : ''} ${open ? 'hdr--open' : ''}`}>
       <div className="hdr__bar">
-        <Link to={href(l, 'home')} className="hdr__logo" aria-label={EVENT.brand}>
-          <Wordmark light={!solid && !open} />
-        </Link>
         <nav className="hdr__nav" aria-label="Menu">
-          {links.map((x) => (
+          {left.map((x) => (
             <NavLink key={x.to} to={x.to} className="hdr__link">
               {x.label}
             </NavLink>
           ))}
         </nav>
-        <div className="hdr__actions">
-          <Link className="hdr__lang" to={alt?.[other] ?? href(other, 'home')} hrefLang={other} lang={other}>
+        <Link to={href(l, 'home')} className={`hdr__logo ${!isHome || scrolled || open ? 'hdr__logo--on' : ''}`} aria-label={EVENT.brand}>
+          Beauty &amp; Hair Expo
+        </Link>
+        <div className="hdr__right">
+          <nav className="hdr__nav" aria-label="Menu 2">
+            {right.map((x) => (
+              <NavLink key={x.to} to={x.to} className="hdr__link">
+                {x.label}
+              </NavLink>
+            ))}
+          </nav>
+          <Link className="hdr__link hdr__lang" to={alt?.[other] ?? href(other, 'home')} hrefLang={other} lang={other}>
             {other.toUpperCase()}
           </Link>
-          <Btn to={href(l, 'tickets')} variant={solid || open ? 'dark' : 'light'} arrow={false} className="hdr__cta">
+          <Link className="hdr__cta" to={href(l, 'tickets')}>
             {t(ui.buyTicket, l)}
-          </Btn>
-          <button
-            className="hdr__burger"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label={open ? t(ui.close, l) : t(ui.menu, l)}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span />
-            <span />
+          </Link>
+          <button className="hdr__burger" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen((v) => !v)}>
+            {open ? t(ui.close, l) : t(ui.menu, l)}
           </button>
         </div>
       </div>
 
       <div id="mobile-menu" className="mnav" hidden={!open}>
         <nav>
-          {links.map((x, i) => (
-            <NavLink key={x.to} to={x.to} className="mnav__link" style={{ transitionDelay: `${i * 30}ms` }}>
+          {[...left, ...right].map((x) => (
+            <NavLink key={x.to} to={x.to} className="mnav__link">
               {x.label}
             </NavLink>
           ))}
         </nav>
-        <div className="mnav__cta">
-          <Btn to={href(l, 'tickets')}>{t(ui.buyTicket, l)}</Btn>
-          <Btn to={href(l, 'exhibit')} variant="outline">
+        <div className="mnav__foot">
+          <Link className="btn btn--dark" to={href(l, 'tickets')}>
+            {t(ui.buyTicket, l)}
+          </Link>
+          <Link className="btn btn--outline" to={href(l, 'exhibit')}>
             {t(ui.becomeExhibitor, l)}
-          </Btn>
+          </Link>
+          <Link className="mnav__lang" to={alt?.[other] ?? href(other, 'home')}>
+            {other === 'en' ? 'English' : 'Polski'}
+          </Link>
         </div>
       </div>
     </header>
@@ -120,46 +118,39 @@ function Footer({ locale: l }: { locale: Locale }) {
         [href(l, 'about'), ui.nav.about],
         [href(l, 'program'), ui.nav.program],
         [href(l, 'tickets'), ui.nav.tickets],
-        [href(l, 'visit'), { pl: 'Informacje praktyczne', en: 'Plan your visit' }],
+        [href(l, 'visit'), { pl: 'Dojazd', en: 'Getting there' }],
       ],
     },
     {
       title: { pl: 'Współpraca', en: 'Work with us' },
       links: [
         [href(l, 'exhibit'), ui.becomeExhibitor],
-        [href(l, 'exhibitors'), { pl: 'Katalog wystawców', en: 'Exhibitor directory' }],
-        [href(l, 'partners'), { pl: 'Partnerzy i reklama', en: 'Partners & advertising' }],
-        [href(l, 'media'), { pl: 'Dla mediów', en: 'Press' }],
+        [href(l, 'exhibitors'), { pl: 'Katalog wystawców', en: 'Exhibitors' }],
+        [href(l, 'partners'), { pl: 'Partnerzy i reklama', en: 'Partners & ads' }],
+        [href(l, 'media'), { pl: 'Media', en: 'Press' }],
       ],
     },
     {
-      title: { pl: 'Informacje', en: 'Info' },
+      title: { pl: 'Więcej', en: 'More' },
       links: [
         [href(l, 'news'), ui.nav.news],
         [href(l, 'contact'), ui.nav.contact],
         [href(l, 'terms'), { pl: 'Regulamin', en: 'Terms' }],
-        [href(l, 'privacy'), { pl: 'Polityka prywatności', en: 'Privacy policy' }],
+        [href(l, 'privacy'), { pl: 'Prywatność', en: 'Privacy' }],
       ],
     },
   ] as const
 
   return (
-    <footer className="ftr">
-      <div className="ftr__top wrap">
-        <div className="ftr__intro">
-          <p className="ftr__date">
+    <footer className="ftr wrap">
+      <div className="ftr__top">
+        <div className="ftr__brand">
+          <p className="ftr__logo">Beauty &amp; Hair Expo</p>
+          <p className="ftr__meta">
             {t(EVENT.dates, l)}
             <br />
             {EVENT.venue}, {t(EVENT.city, l)}
           </p>
-          <div className="ftr__btns">
-            <Btn to={href(l, 'tickets')} variant="light">
-              {t(ui.buyTicket, l)}
-            </Btn>
-            <Btn to={href(l, 'exhibit')} variant="outline" className="btn--on-dark">
-              {t(ui.becomeExhibitor, l)}
-            </Btn>
-          </div>
         </div>
         {cols.map((c) => (
           <div key={c.title.pl} className="ftr__col">
@@ -183,20 +174,14 @@ function Footer({ locale: l }: { locale: Locale }) {
                 </a>
               </li>
             ))}
-            <li>
-              <a href={`mailto:${EVENT.emails.kontakt}`}>{EVENT.emails.kontakt}</a>
-            </li>
           </ul>
         </div>
       </div>
-      <div className="ftr__mark" aria-hidden="true">
-        Beauty &amp; Hair
-      </div>
-      <div className="ftr__bottom wrap">
+      <div className="ftr__bottom">
         <span>
-          © 2028 {EVENT.brand}. {l === 'pl' ? 'Organizator' : 'Organiser'}: {EVENT.organizer}
+          © 2028 {EVENT.brand} · {l === 'pl' ? 'Organizator' : 'Organiser'}: {EVENT.organizer}
         </span>
-        <span className="ftr__draft">{t(ui.sample, l)}</span>
+        <span>{t(ui.sample, l)}</span>
       </div>
     </footer>
   )

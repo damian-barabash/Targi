@@ -101,7 +101,7 @@ export const ZONES: Zone[] = [
     slug: { pl: 'make-up', en: 'make-up' },
     short: 'make-up',
     name: { pl: 'Strefa Make-up', en: 'Make-up Zone' },
-    img: 'zone-makeup',
+    img: 'portrait-bun',
     partner: 'Atelier Lumière',
     lead: {
       pl: 'Makijaż dzienny, ślubny i sceniczny. Testy kosmetyków i konsultacje z wizażystami.',
@@ -165,7 +165,7 @@ export const MASTERCLASSES: Masterclass[] = [
     price: 249,
     seats: 30,
     left: 12,
-    img: 'mc-blowdry',
+    img: 'hair-blowdry',
   },
   {
     id: 'bridal',
@@ -176,7 +176,7 @@ export const MASTERCLASSES: Masterclass[] = [
     price: 199,
     seats: 25,
     left: 4,
-    img: 'zone-makeup',
+    img: 'hero',
   },
   {
     id: 'salon',
@@ -262,7 +262,7 @@ export const POSTS: Post[] = [
     slug: 'ruszamy-z-pierwsza-edycja',
     title: { pl: 'Ruszamy z pierwszą edycją Beauty & Hair Expo', en: 'The first Beauty & Hair Expo is coming' },
     date: '2026-11-05',
-    img: 'hair-blowdry',
+    img: 'event-auditorium',
     excerpt: {
       pl: 'W lutym 2028 ZEN.COM Expo zamieni się w największe spotkanie branży beauty na Podkarpaciu.',
       en: 'In February 2028 ZEN.COM Expo becomes the biggest beauty industry meeting in south-eastern Poland.',

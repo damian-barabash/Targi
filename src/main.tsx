@@ -1,6 +1,7 @@
 import { ViteReactSSG } from 'vite-react-ssg'
-import '@fontsource/gloock/400.css'
-import '@fontsource-variable/manrope/index.css'
+import '@fontsource-variable/instrument-sans/index.css'
+import '@fontsource-variable/newsreader/opsz.css'
+import '@fontsource-variable/newsreader/opsz-italic.css'
 import './styles/global.css'
 import { routes } from './routes'
 

@@ -3,7 +3,7 @@ import { copyFileSync, readdirSync, statSync, writeFileSync, existsSync } from '
 import { join } from 'node:path'
 
 const dist = 'dist'
-const site = (process.env.SITE_URL || 'https://targibeautyhair.pl').replace(/\/$/, '')
+const site = (process.env.SITE_URL || 'https://beauty.barabashflow.pl').replace(/\/$/, '')
 const base = (process.env.BASE_PATH || '/').replace(/\/?$/, '/')
 
 if (existsSync(join(dist, '404/index.html'))) copyFileSync(join(dist, '404/index.html'), join(dist, '404.html'))

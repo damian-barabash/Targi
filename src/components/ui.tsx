@@ -10,8 +10,8 @@ export const useLocale = () => useContext(LocaleCtx)
 
 export function Arrow({ className = '' }: { className?: string }) {
   return (
-    <svg className={`arrow ${className}`} viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className={`arrow ${className}`} viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="square" />
     </svg>
   )
 }
@@ -19,25 +19,32 @@ export function Arrow({ className = '' }: { className?: string }) {
 type BtnProps = {
   to: string
   children: ReactNode
-  variant?: 'dark' | 'light' | 'outline' | 'gold' | 'glass'
+  variant?: 'dark' | 'light' | 'outline' | 'gold'
   arrow?: boolean
   className?: string
 }
 
-export function Btn({ to, children, variant = 'dark', arrow = true, className = '' }: BtnProps) {
+/** Mała prostokątna etykieta-przycisk, jak w referencji. */
+export function Btn({ to, children, variant = 'dark', arrow = false, className = '' }: BtnProps) {
   const cls = `btn btn--${variant} ${className}`
   const inner = (
     <>
       <span>{children}</span>
-      {arrow && (
-        <span className="btn__icon">
-          <Arrow />
-        </span>
-      )}
+      {arrow && <Arrow />}
     </>
   )
   if (/^(https?:|mailto:|#)/.test(to)) return <a className={cls} href={to}>{inner}</a>
   return <Link className={cls} to={to}>{inner}</Link>
+}
+
+/** Link tekstowy ze strzałką. */
+export function More({ to, children }: { to: string; children: ReactNode }) {
+  return (
+    <Link className="more" to={to}>
+      <span>{children}</span>
+      <Arrow />
+    </Link>
+  )
 }
 
 export function Img({
@@ -122,8 +129,8 @@ export function Countdown({ labels }: { labels: { days: string; hours: string; m
   )
 }
 
-export function Eyebrow({ children, light = false }: { children: ReactNode; light?: boolean }) {
-  return <span className={`eyebrow ${light ? 'eyebrow--light' : ''}`}>{children}</span>
+export function Eyebrow({ children }: { children: ReactNode; light?: boolean }) {
+  return <p className="kicker">{children}</p>
 }
 
 export function Seo({ title, description, image = 'hero' }: { title: string; description: string; image?: string }) {
@@ -144,19 +151,27 @@ export function Seo({ title, description, image = 'hero' }: { title: string; des
   )
 }
 
-/** Miejsce reklamowe. Treść (baner, okres emisji, statystyki) przyjdzie z panelu. */
-export function AdSlot({ id, label, variant = 'wide' }: { id: string; label: string; variant?: 'wide' | 'card' }) {
+/** Miejsce reklamowe. Baner, okres emisji i statystyki przyjdą z panelu.
+ *  wide = 1200×200 (pasek), tile = kafel w siatce, bar = pasek partnera głównego. */
+export function AdSlot({ id, label, variant = 'wide' }: { id: string; label: string; variant?: 'wide' | 'tile' | 'bar' }) {
   const l = useLocale()
+  const pl = l === 'pl'
+  if (variant === 'bar')
+    return (
+      <aside className="adbar" data-ad-slot={id} aria-label={label}>
+        <span className="adbar__k">{pl ? 'Partner główny' : 'Main partner'}</span>
+        <span className="adbar__logo">Maison Coiffure</span>
+        <span className="adbar__txt">{pl ? 'Oficjalny partner strefy Hair' : 'Official Hair Zone partner'}</span>
+      </aside>
+    )
   return (
     <aside className={`ad ad--${variant}`} data-ad-slot={id} aria-label={label}>
       <span className="ad__label">{label}</span>
       <div className="ad__body">
         <span className="ad__brand">Atelier Lumière</span>
-        <span className="ad__claim">
-          {l === 'pl' ? 'Nowa kolekcja pomadek — przetestuj na stoisku B04' : 'New lipstick collection — try it at stand B04'}
-        </span>
+        <span className="ad__claim">{pl ? 'Spotkaj nas na stoisku B04' : 'Meet us at stand B04'}</span>
       </div>
-      <Img name="product-brush" className="ad__img" sizes="400px" />
+      <span className="ad__size">{variant === 'wide' ? '1200 × 200' : '600 × 750'}</span>
     </aside>
   )
 }

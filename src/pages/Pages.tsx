@@ -17,13 +17,13 @@ export function About() {
   ]
   return (
     <>
-      <Seo title={pl ? 'O targach' : 'About'} description={pl ? 'Beauty & Hair Expo to coroczne targi branży beauty i hair w Rzeszowie. Dla kogo są i co zobaczysz.' : 'Beauty & Hair Expo is an annual beauty and hair trade show in Rzeszów. Who it’s for and what you’ll see.'} image="hair-wavy" />
-      <PageHero img="hair-wavy" eyebrow={pl ? 'Pierwsza edycja · 2028' : 'First edition · 2028'} title={pl ? 'O targach' : 'About'} />
+      <Seo title={pl ? 'O targach' : 'About'} description={pl ? 'Beauty & Hair Expo to coroczne targi branży beauty i hair w Rzeszowie. Dla kogo są i co zobaczysz.' : 'Beauty & Hair Expo is an annual beauty and hair trade show in Rzeszów. Who it’s for and what you’ll see.'} image="event-runway" />
+      <PageHero img="event-runway" eyebrow={pl ? 'Pierwsza edycja · 2028' : 'First edition · 2028'} title={pl ? 'O targach' : 'About'} />
 
-      <section className="sec wrap intro intro--about">
-        <Reveal className="intro__copy">
+      <section className="split2 wrap">
+        <Reveal className="split2__copy">
           <Eyebrow>{EVENT.brand}</Eyebrow>
-          <h2 className="intro__title">
+          <h2 className="h2">
             {pl ? (
               <>
                 Targi, które <em>inspirują</em> i&nbsp;sprzedają
@@ -44,8 +44,8 @@ export function About() {
             <strong>{EVENT.organizer}</strong>.
           </p>
         </Reveal>
-        <Reveal className="intro__media" delay={100}>
-          <Img name="product-stones" className="intro__img" sizes="(max-width: 800px) 100vw, 45vw" />
+        <Reveal className="split2__media" delay={100}>
+          <Img name="event-auditorium" sizes="(max-width: 800px) 100vw, 45vw" />
         </Reveal>
       </section>
 
@@ -142,8 +142,8 @@ export function Partners() {
   ]
   return (
     <>
-      <Seo title={pl ? 'Partnerzy i sponsorzy' : 'Partners & sponsors'} description={pl ? 'Partnerzy, sponsorzy i patroni medialni Beauty & Hair Expo. Pakiety partnerskie i reklama.' : 'Partners, sponsors and media partners of Beauty & Hair Expo. Partnership packages and advertising.'} image="product-bottles" />
-      <PageHero img="product-bottles" eyebrow={pl ? 'Współpraca' : 'Partnership'} title={pl ? 'Partnerzy' : 'Partners'} lead={pl ? 'Marki, które tworzą z nami pierwszą edycję.' : 'Brands creating the first edition with us.'} />
+      <Seo title={pl ? 'Partnerzy i sponsorzy' : 'Partners & sponsors'} description={pl ? 'Partnerzy, sponsorzy i patroni medialni Beauty & Hair Expo. Pakiety partnerskie i reklama.' : 'Partners, sponsors and media partners of Beauty & Hair Expo. Partnership packages and advertising.'} image="event-networking" />
+      <PageHero img="event-networking" eyebrow={pl ? 'Współpraca' : 'Partnership'} title={pl ? 'Partnerzy' : 'Partners'} lead={pl ? 'Marki, które tworzą z nami pierwszą edycję.' : 'Brands creating the first edition with us.'} />
       <section className="sec wrap">
         <LogoWall />
       </section>

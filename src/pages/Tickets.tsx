@@ -30,7 +30,7 @@ export default function Tickets() {
         description={pl ? 'Bilety jednodniowe, dwudniowe, VIP i masterclass na Beauty & Hair Expo Rzeszów 2028. E-bilet z kodem QR.' : 'One-day, two-day, VIP and masterclass tickets for Beauty & Hair Expo Rzeszów 2028. E-ticket with a QR code.'}
       />
       <PageHero
-        img="portrait-bun"
+        img="ticket-badge"
         eyebrow={pl ? 'Bilety · 19–20.02.2028' : 'Tickets · 19–20.02.2028'}
         title={pl ? 'Bilety' : 'Tickets'}
         lead={pl ? 'Kup online w minutę. Bilet z kodem QR przyjdzie na Twój e-mail.' : 'Buy online in a minute. Your QR ticket arrives by e-mail.'}

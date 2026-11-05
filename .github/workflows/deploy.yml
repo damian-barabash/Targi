@@ -18,9 +18,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # "/" dla własnej domeny (CNAME), "/<repo>/" dla adresu github.io/<repo>
-      BASE_PATH: ${{ vars.BASE_PATH || format('/{0}/', github.event.repository.name) }}
-      SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io', github.repository_owner) }}
+      # strona działa na własnej domenie (public/CNAME) → ścieżki od "/"
+      # dla adresu github.io/<repo> ustaw zmienną repo BASE_PATH=/<repo>/
+      BASE_PATH: ${{ vars.BASE_PATH || '/' }}
+      SITE_URL: ${{ vars.SITE_URL || 'https://beauty.barabashflow.pl' }}
       # klucz publishable jest publiczny z założenia (dostęp pilnuje RLS)
       VITE_SUPABASE_URL: https://srjkshsoeokvnbukmoqg.supabase.co
       VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable__HWHQbhS68x68FO35GeDSw_dL-JAfao

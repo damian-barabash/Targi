@@ -48,7 +48,7 @@ export function Exhibitors() {
                 </div>
                 <span className="exh__stand">{pl ? 'Stoisko' : 'Stand'} {e.stand}</span>
               </article>
-              {i === 5 && <AdSlot id="catalog-inline" label={t(ui.ad, l)} variant="card" />}
+              {i === 5 && <AdSlot id="catalog-inline" label={t(ui.ad, l)} variant="tile" />}
             </div>
           ))}
         </div>
@@ -71,8 +71,8 @@ export function Exhibit() {
   ]
   return (
     <>
-      <Seo title={pl ? 'Zostań wystawcą' : 'Become an exhibitor'} description={pl ? 'Zaprezentuj markę na Beauty & Hair Expo Rzeszów 2028. Stoiska, branding, studio wideo i panele. Wyślij zgłoszenie.' : 'Present your brand at Beauty & Hair Expo Rzeszów 2028. Stands, branding, video studio and panels. Apply now.'} image="mc-team" />
-      <PageHero img="mc-team" eyebrow={pl ? 'Dla wystawców' : 'For exhibitors'} title={pl ? 'Zostań wystawcą' : 'Exhibit with us'} lead={pl ? 'Spotkaj klientów twarzą w twarz. Zostaw kontakt — przygotujemy ofertę dla Twojej marki.' : 'Meet your customers face to face. Leave your details and we’ll prepare an offer.'}>
+      <Seo title={pl ? 'Zostań wystawcą' : 'Become an exhibitor'} description={pl ? 'Zaprezentuj markę na Beauty & Hair Expo Rzeszów 2028. Stoiska, branding, studio wideo i panele. Wyślij zgłoszenie.' : 'Present your brand at Beauty & Hair Expo Rzeszów 2028. Stands, branding, video studio and panels. Apply now.'} image="event-booth" />
+      <PageHero img="event-booth" eyebrow={pl ? 'Dla wystawców' : 'For exhibitors'} title={pl ? 'Zostań wystawcą' : 'Exhibit with us'} lead={pl ? 'Spotkaj klientów twarzą w twarz. Zostaw kontakt — przygotujemy ofertę dla Twojej marki.' : 'Meet your customers face to face. Leave your details and we’ll prepare an offer.'}>
         <Btn to="#zgloszenie" variant="light">
           {pl ? 'Wyślij zgłoszenie' : 'Apply now'}
         </Btn>
