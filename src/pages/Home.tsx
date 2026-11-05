@@ -71,8 +71,16 @@ export default function Home() {
         <AdSlot id="home-main-partner" label={t(ui.ad, l)} variant="bar" />
       </div>
 
+      {/* Bilety */}
+      <section className="sec wrap" id="bilety">
+        <SectionHead eyebrow={pl ? 'Wybierz bilet' : 'Choose your ticket'} title={pl ? 'Bilety' : 'Tickets'}>
+          <p className="muted">{pl ? 'E-bilet z kodem QR na e-mail. BLIK, karta, Apple Pay, Google Pay.' : 'E-ticket with a QR code by e-mail. BLIK, card, Apple Pay, Google Pay.'}</p>
+        </SectionHead>
+        <TicketCards />
+      </section>
+
       {/* Co jest na targach — siatka 4 kafli */}
-      <section className="sec wrap">
+      <section className="sec sec--flush wrap">
         <div className="grid4">
           {features.map((f, i) => (
             <Reveal key={f.img} delay={i * 60}>
@@ -135,14 +143,6 @@ export default function Home() {
       </section>
 
       <StatsRow />
-
-      {/* Bilety */}
-      <section className="sec wrap" id="bilety">
-        <SectionHead eyebrow={pl ? 'Wybierz bilet' : 'Choose your ticket'} title={pl ? 'Bilety' : 'Tickets'}>
-          <p className="muted">{pl ? 'E-bilet z kodem QR na e-mail. BLIK, karta, Apple Pay, Google Pay.' : 'E-ticket with a QR code by e-mail. BLIK, card, Apple Pay, Google Pay.'}</p>
-        </SectionHead>
-        <TicketCards />
-      </section>
 
       {/* Strefy */}
       <section className="sec wrap">
