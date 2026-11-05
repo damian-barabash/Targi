@@ -8,7 +8,7 @@ export default function Home() {
   const l = useLocale()
   const pl = l === 'pl'
   const features = [
-    { img: 'mc-team', name: { pl: 'Pokazy na scenie', en: 'Stage shows' }, meta: { pl: 'Scena główna', en: 'Main stage' }, to: href(l, 'program') },
+    { img: 'event-speaker', name: { pl: 'Pokazy na scenie', en: 'Stage shows' }, meta: { pl: 'Scena główna', en: 'Main stage' }, to: href(l, 'program') },
     { img: 'mc-blowdry', name: { pl: 'Masterclass', en: 'Masterclasses' }, meta: { pl: '25 warsztatów', en: '25 workshops' }, to: `${href(l, 'program')}#masterclass` },
     { img: 'event-booth', name: { pl: 'Stoiska marek', en: 'Brand stands' }, meta: { pl: '120+ wystawców', en: '120+ exhibitors' }, to: href(l, 'exhibitors') },
     { img: 'event-networking', name: { pl: 'Spotkania B2B', en: 'B2B meetings' }, meta: { pl: 'Strefa VIP', en: 'VIP lounge' }, to: href(l, 'about') },
@@ -57,6 +57,13 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Krótki pas ze zdjęciem między hero a biletami */}
+      <section className="pband pband--short" aria-hidden="true">
+        <div className="pband__media">
+          <Img name="mc-team" sizes="100vw" />
+        </div>
+      </section>
+
       {/* Pasek partnera głównego — pierwsze miejsce reklamowe */}
       <div className="wrap">
         <AdSlot id="home-main-partner" label={t(ui.ad, l)} variant="bar" />
@@ -70,31 +77,18 @@ export default function Home() {
         <TicketCards />
       </section>
 
-      {/* Zdjęcie sali — szeroki kadr z paralaksą między biletami a twarzami */}
-      <section className="pband">
-        <div className="pband__media">
-          <Img name="hero-venue" sizes="100vw" />
-        </div>
-        <div className="pband__cap wrap">
-          <span>{EVENT.venue}</span>
-          <span>{t(EVENT.city, l)}</span>
-        </div>
-      </section>
-
       {/* Twarze wydarzenia — na razie miejsca na zdjęcia ambasadorek */}
       <section className="sec wrap">
         <SectionHead eyebrow={pl ? 'Twarze Beauty & Hair Expo' : 'Faces of Beauty & Hair Expo'} title={pl ? 'Twarze' : 'Faces'}>
-          <p className="muted">{pl ? 'Ambasadorki pierwszej edycji — zdjęcia wkrótce.' : 'Ambassadors of the first edition — photos coming soon.'}</p>
+          <p className="muted">{pl ? 'Ambasadorki pierwszej edycji. Zdjęcia przykładowe.' : 'Ambassadors of the first edition. Sample photos.'}</p>
         </SectionHead>
         <div className="grid4">
           {FACES.map((f, i) => (
             <Reveal as="article" key={f.name} delay={i * 60} className="face">
-              <div className="ph ph--portrait" role="img" aria-label={pl ? `Miejsce na zdjęcie: ${f.name}` : `Photo placeholder: ${f.name}`}>
-                <svg viewBox="0 0 120 160" aria-hidden="true">
-                  <circle cx="60" cy="58" r="24" />
-                  <path d="M16 160c0-30 20-50 44-50s44 20 44 50z" />
-                </svg>
-                <span className="ph__label">{pl ? 'Zdjęcie wkrótce' : 'Photo coming soon'}</span>
+              <div className="tile__media face__media">
+                <Img name={f.img} sizes="(max-width: 700px) 50vw, 25vw" alt={f.name} />
+                {/* zdjęcia robocze — prawdziwe ambasadorki przekażą klientki */}
+                <span className="ph__label">{pl ? 'Zdjęcie przykładowe' : 'Sample photo'}</span>
               </div>
               <div className="face__cap">
                 <span className="face__name">{f.name}</span>
@@ -146,7 +140,7 @@ export default function Home() {
           </Btn>
         </Reveal>
         <Reveal className="split2__media" delay={80}>
-          <Img name="event-speaker" sizes="(max-width: 800px) 100vw, 55vw" />
+          <Img name="event-stage" sizes="(max-width: 800px) 100vw, 55vw" />
         </Reveal>
       </section>
 
@@ -279,7 +273,7 @@ export default function Home() {
           <More to={href(l, 'visit')}>{pl ? 'Jak dojechać' : 'Getting there'}</More>
         </Reveal>
         <Reveal className="split2__media" delay={80}>
-          <Img name="hero-venue" sizes="(max-width: 800px) 100vw, 55vw" />
+          <Img name="event-hall" sizes="(max-width: 800px) 100vw, 55vw" />
         </Reveal>
       </section>
 

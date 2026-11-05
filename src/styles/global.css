@@ -2486,3 +2486,20 @@ html.lenis body {
     grid-template-columns: 1fr;
   }
 }
+
+.pband--short {
+  margin-block: 0;
+}
+.pband--short .pband__media {
+  height: clamp(150px, 20vw, 300px);
+}
+.pband--short .pband__media img {
+  object-position: 50% 30%;
+}
+
+.face__media {
+  position: relative;
+}
+.face__media .ph__label {
+  z-index: 1;
+}

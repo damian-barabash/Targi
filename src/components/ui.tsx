@@ -133,7 +133,7 @@ export function Eyebrow({ children }: { children: ReactNode; light?: boolean }) 
   return <p className="kicker">{children}</p>
 }
 
-export function Seo({ title, description, image = 'hero-venue' }: { title: string; description: string; image?: string }) {
+export function Seo({ title, description, image = 'mc-team' }: { title: string; description: string; image?: string }) {
   const l = useLocale()
   const full = title.includes(EVENT.brand) ? title : `${title} · ${EVENT.brand}`
   return (
