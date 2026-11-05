@@ -65,8 +65,11 @@ export default function Motion() {
         const box = (img.parentElement ?? img).getBoundingClientRect()
         // -1 (pod ekranem) … 1 (nad ekranem)
         const p = (box.top + box.height / 2 - h / 2) / (h / 2 + box.height / 2)
-        const strength = img.classList.contains('hero__img') ? 0.18 : 0.08
-        img.style.transform = `translate3d(0, ${(-p * box.height * strength).toFixed(1)}px, 0) scale(1.16)`
+        // wąski pas pod hero: mniejsze powiększenie, żeby nie ucinać twarzy
+        const thin = img.closest('.pband--short') !== null
+        const strength = img.classList.contains('hero__img') ? 0.18 : thin ? 0.03 : 0.08
+        const zoom = thin ? 1.06 : 1.16
+        img.style.transform = `translate3d(0, ${(-p * box.height * strength).toFixed(1)}px, 0) scale(${zoom})`
       }
       if (mark) {
         const y = Math.min(window.scrollY, h)

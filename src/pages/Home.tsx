@@ -62,8 +62,8 @@ export default function Home() {
         <div className="pband__media">
           {/* wysoka rozdzielczość — pas na całą szerokość, także na ekranach retina */}
           <img
-            src={`${import.meta.env.BASE_URL}img/strip-makeup-1400.webp`}
-            srcSet={`${import.meta.env.BASE_URL}img/strip-makeup-800.webp 800w, ${import.meta.env.BASE_URL}img/strip-makeup-1400.webp 1400w, ${import.meta.env.BASE_URL}img/strip-makeup-2800.webp 2800w`}
+            src={`${import.meta.env.BASE_URL}img/strip-show-1400.webp`}
+            srcSet={`${import.meta.env.BASE_URL}img/strip-show-800.webp 800w, ${import.meta.env.BASE_URL}img/strip-show-1400.webp 1400w, ${import.meta.env.BASE_URL}img/strip-show-2800.webp 2800w`}
             sizes="100vw"
             alt=""
             loading="lazy"
