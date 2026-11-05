@@ -57,7 +57,7 @@ function Header({ locale: l }: { locale: Locale }) {
   const other: Locale = l === 'pl' ? 'en' : 'pl'
 
   return (
-    <header className={`hdr ${scrolled ? 'hdr--solid' : ''} ${open ? 'hdr--open' : ''} ${isHome && !scrolled && !open ? 'hdr--onphoto' : ''}`}>
+    <header className={`hdr ${scrolled ? 'hdr--solid' : ''} ${open ? 'hdr--open' : ''}`}>
       <div className="hdr__bar">
         <nav className="hdr__nav" aria-label="Menu">
           {left.map((x) => (

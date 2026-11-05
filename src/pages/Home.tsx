@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom'
 import { href, t, ui } from '../i18n'
-import { EVENT, POSTS } from '../content/site'
+import { EVENT, FACES, POSTS } from '../content/site'
 import { AdSlot, Btn, Countdown, Img, More, Reveal, Seo, useLocale } from '../components/ui'
-import { imgSrc } from '../lib/img'
 import { ExpertsGrid, LogoWall, MasterclassList, NewsletterBlock, SectionHead, StatsRow, TicketCards, ZoneCards } from '../components/sections'
 
 export default function Home() {
@@ -26,43 +25,49 @@ export default function Home() {
         }
       />
 
-      {/* HERO — ogromny wordmark na zdjęciu, pod nim spokojny podpis i przyciski */}
-      <section className="hero">
-        <img
-          className="hero__img"
-          src={imgSrc('hero-venue', 1600)}
-          srcSet={`${imgSrc('hero-venue', 800)} 800w, ${imgSrc('hero-venue', 1600)} 1600w, ${import.meta.env.BASE_URL}img/hero-venue-2400.webp 2400w`}
-          sizes="100vw"
-          alt=""
-          fetchPriority="high"
-          decoding="async"
-        />
-        <div className="hero__wash" />
-        <h1 className="hero__mark">
-          Beauty &amp; Hair
-          <span className="sr-only">
-            {' '}
-            Expo {EVENT.edition}, {t(EVENT.dates, l)}
-          </span>
-        </h1>
-        <div className="hero__center">
-          <p className="hero__line">Expo Rzeszów — {t(EVENT.dates, l)}</p>
-          <div className="btn-row btn-row--center">
-            <Btn to={href(l, 'tickets')} variant="light">
-              {t(ui.buyTicket, l)}
-            </Btn>
-            <Btn to={href(l, 'exhibit')} variant="outline" className="btn--on-photo">
-              {t(ui.becomeExhibitor, l)}
-            </Btn>
+      {/* HERO — logo + twarze wydarzenia + dwa kliknięcia (wymóg klientek) */}
+      <section className="hero2">
+        <div className="hero2__top wrap">
+          {/* Logo wydarzenia — docelowo plik od klientek, na razie wordmark */}
+          <h1 className="hero2__logo">
+            Beauty &amp; Hair
+            <span className="hero2__logo-sub">Expo · Rzeszów 2028</span>
+            <span className="sr-only">, {t(EVENT.dates, l)}</span>
+          </h1>
+          <div className="hero2__bar">
+            <p className="hero2__meta">
+              {t(EVENT.dates, l)}
+              <br />
+              {EVENT.venue} · {t(EVENT.city, l)}
+            </p>
+            <div className="hero2__cta">
+              <Btn to={href(l, 'tickets')} className="btn--lg">
+                {t(ui.buyTicket, l)}
+              </Btn>
+              <Btn to={href(l, 'exhibit')} variant="outline" className="btn--lg">
+                {t(ui.becomeExhibitor, l)}
+              </Btn>
+            </div>
+            <p className="hero2__count">
+              {pl ? 'Do otwarcia' : 'Opens in'}
+              <br />
+              <Countdown labels={{ days: t(ui.days, l), hours: t(ui.hours, l), minutes: t(ui.minutes, l) }} />
+            </p>
           </div>
         </div>
-        <div className="hero__foot">
-          <span>
-            {EVENT.venue} · {t(EVENT.city, l)}
-          </span>
-          <span className="hero__count">
-            {pl ? 'Do otwarcia' : 'Opens in'} <Countdown labels={{ days: t(ui.days, l), hours: t(ui.hours, l), minutes: t(ui.minutes, l) }} />
-          </span>
+        <div className="hero2__faces wrap">
+          {FACES.map((f, i) => (
+            <figure key={f.name} className="face" style={{ animationDelay: `${0.15 + i * 0.08}s` }}>
+              <div className="tile__media face__media">
+                <Img name={f.img} eager sizes="(max-width: 700px) 50vw, 25vw" alt={f.name} />
+              </div>
+              <figcaption>
+                <span className="face__name">{f.name}</span>
+                <span className="face__role">{t(f.role, l)}</span>
+              </figcaption>
+            </figure>
+          ))}
+          <p className="hero2__faces-k">{pl ? 'Twarze Beauty & Hair Expo' : 'Faces of Beauty & Hair Expo'}</p>
         </div>
       </section>
 
@@ -251,7 +256,7 @@ export default function Home() {
           <More to={href(l, 'visit')}>{pl ? 'Jak dojechać' : 'Getting there'}</More>
         </Reveal>
         <Reveal className="split2__media" delay={80}>
-          <Img name="event-hall" sizes="(max-width: 800px) 100vw, 55vw" />
+          <Img name="hero-venue" sizes="(max-width: 800px) 100vw, 55vw" />
         </Reveal>
       </section>
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { href, t, ui } from '../i18n'
 import { EXHIBITORS, ZONES } from '../content/site'
-import { AdSlot, Btn, Eyebrow, Img, Reveal, Seo, useLocale } from '../components/ui'
+import { AdSlot, Btn, Img, Reveal, Seo, useLocale } from '../components/ui'
 import { PageHero, SectionHead } from '../components/sections'
 import { LeadForm, baseFields } from '../components/forms'
 
@@ -72,14 +72,55 @@ export function Exhibit() {
   return (
     <>
       <Seo title={pl ? 'Zostań wystawcą' : 'Become an exhibitor'} description={pl ? 'Zaprezentuj markę na Beauty & Hair Expo Rzeszów 2028. Stoiska, branding, studio wideo i panele. Wyślij zgłoszenie.' : 'Present your brand at Beauty & Hair Expo Rzeszów 2028. Stands, branding, video studio and panels. Apply now.'} image="event-booth" />
-      <PageHero img="event-booth" eyebrow={pl ? 'Dla wystawców' : 'For exhibitors'} title={pl ? 'Zostań wystawcą' : 'Exhibit with us'} lead={pl ? 'Spotkaj klientów twarzą w twarz. Zostaw kontakt — przygotujemy ofertę dla Twojej marki.' : 'Meet your customers face to face. Leave your details and we’ll prepare an offer.'}>
-        <Btn to="#zgloszenie" variant="light">
-          {pl ? 'Wyślij zgłoszenie' : 'Apply now'}
-        </Btn>
-      </PageHero>
+      {/* Formularz od razu na górze — „Zostań wystawcą” prowadzi prosto do zgłoszenia */}
+      <section className="exform wrap" id="zgloszenie">
+        <div className="exform__copy">
+          <h1 className="phero__title">{pl ? 'Zostań wystawcą' : 'Exhibit with us'}</h1>
+          <p className="phero__lead">
+            {pl
+              ? 'Stoisk nie sprzedajemy online. Zostaw kontakt — przygotujemy ofertę dopasowaną do Twojej marki i odezwiemy się w ciągu kilku dni roboczych.'
+              : 'Stands are not sold online. Leave your details — we’ll prepare an offer for your brand and reply within a few working days.'}
+          </p>
+          <p className="exform__mail">
+            <a href="mailto:wystawcy@targibeautyhair.pl">wystawcy@targibeautyhair.pl</a>
+          </p>
+          <div className="exform__media tile__media tile__media--wide">
+            <Img name="event-booth" eager sizes="(max-width: 860px) 100vw, 40vw" />
+          </div>
+        </div>
+        <div className="exform__form">
+          <LeadForm
+            kind="exhibitor"
+            fields={[
+              ...baseFields.map((f) => (f.name === 'company' ? { ...f, required: true } : f)),
+              { name: 'nip', label: { pl: 'NIP', en: 'VAT number' } },
+              {
+                name: 'zone',
+                label: { pl: 'Strefa', en: 'Zone' },
+                type: 'select',
+                options: ZONES.map((z) => ({ value: z.short, label: z.name })),
+              },
+              {
+                name: 'stand_size',
+                label: { pl: 'Wielkość stoiska', en: 'Stand size' },
+                type: 'select',
+                options: [
+                  { value: '6-12', label: { pl: '6–12 m²', en: '6–12 m²' } },
+                  { value: '12-30', label: { pl: '12–30 m²', en: '12–30 m²' } },
+                  { value: '30+', label: { pl: 'powyżej 30 m²', en: 'over 30 m²' } },
+                  { value: 'unknown', label: { pl: 'Jeszcze nie wiem', en: 'Not sure yet' } },
+                ],
+              },
+              { name: 'message', label: { pl: 'Czym się zajmujecie i czego potrzebujecie?', en: 'What do you do and what do you need?' }, type: 'textarea' },
+            ]}
+            submitLabel={{ pl: 'Wyślij zgłoszenie', en: 'Send application' }}
+            success={{ pl: 'Dziękujemy! Zgłoszenie dotarło. Odezwiemy się z ofertą.', en: 'Thank you! We’ve received your application and will be in touch.' }}
+          />
+        </div>
+      </section>
 
       <section className="sec wrap">
-        <SectionHead eyebrow={pl ? 'Pakiet szyty na miarę' : 'A tailor-made package'} title={pl ? 'Oferta' : 'Offer'}>
+        <SectionHead eyebrow={pl ? 'Co możesz zyskać' : 'What you get'} title={pl ? 'Oferta' : 'Offer'}>
           <p>{pl ? 'Cennik i pakiety przekażemy po zgłoszeniu.' : 'We’ll send prices and packages after you apply.'}</p>
         </SectionHead>
         <div className="offer">
@@ -90,49 +131,6 @@ export function Exhibit() {
               <p>{t(o.txt, l)}</p>
             </Reveal>
           ))}
-        </div>
-      </section>
-
-      <section className="sec sec--tint" id="zgloszenie">
-        <div className="wrap split">
-          <Reveal className="split__copy">
-            <Eyebrow>{pl ? 'Zgłoszenie' : 'Application'}</Eyebrow>
-            <h2 className="split__title">{pl ? 'Porozmawiajmy o Twoim stoisku' : 'Let’s talk about your stand'}</h2>
-            <p>{pl ? 'Odpowiemy w ciągu kilku dni roboczych.' : 'We’ll reply within a few working days.'}</p>
-            <p>
-              <a href="mailto:wystawcy@targibeautyhair.pl">wystawcy@targibeautyhair.pl</a>
-            </p>
-            <Img name="event-audience" className="split__img" sizes="(max-width: 800px) 100vw, 35vw" />
-          </Reveal>
-          <Reveal className="split__form" delay={100}>
-            <LeadForm
-              kind="exhibitor"
-              fields={[
-                ...baseFields.map((f) => (f.name === 'company' ? { ...f, required: true } : f)),
-                { name: 'nip', label: { pl: 'NIP', en: 'VAT number' } },
-                {
-                  name: 'zone',
-                  label: { pl: 'Strefa', en: 'Zone' },
-                  type: 'select',
-                  options: ZONES.map((z) => ({ value: z.short, label: z.name })),
-                },
-                {
-                  name: 'stand_size',
-                  label: { pl: 'Wielkość stoiska', en: 'Stand size' },
-                  type: 'select',
-                  options: [
-                    { value: '6-12', label: { pl: '6–12 m²', en: '6–12 m²' } },
-                    { value: '12-30', label: { pl: '12–30 m²', en: '12–30 m²' } },
-                    { value: '30+', label: { pl: 'powyżej 30 m²', en: 'over 30 m²' } },
-                    { value: 'unknown', label: { pl: 'Jeszcze nie wiem', en: 'Not sure yet' } },
-                  ],
-                },
-                { name: 'message', label: { pl: 'Czym się zajmujecie i czego potrzebujecie?', en: 'What do you do and what do you need?' }, type: 'textarea' },
-              ]}
-              submitLabel={{ pl: 'Wyślij zgłoszenie', en: 'Send application' }}
-              success={{ pl: 'Dziękujemy! Zgłoszenie dotarło. Odezwiemy się z ofertą.', en: 'Thank you! We’ve received your application and will be in touch.' }}
-            />
-          </Reveal>
         </div>
       </section>
 

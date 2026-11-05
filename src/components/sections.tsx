@@ -7,7 +7,7 @@ import { Btn, Img, More, Reveal, useLocale } from './ui'
 import { NewsletterForm } from './forms'
 
 /** Nagłówek podstrony: duży tytuł groteskiem + szerokie zdjęcie pod spodem. */
-export function PageHero({ title, eyebrow, lead, img, children }: { title: string; eyebrow?: string; lead?: string; img: string; children?: ReactNode }) {
+export function PageHero({ title, eyebrow, lead, img, children }: { title: string; eyebrow?: string; lead?: string; img?: string; children?: ReactNode }) {
   return (
     <section className="phero">
       <div className="phero__head wrap">
@@ -18,9 +18,11 @@ export function PageHero({ title, eyebrow, lead, img, children }: { title: strin
           {children && <div className="phero__actions">{children}</div>}
         </div>
       </div>
-      <div className="phero__media wrap">
-        <Img name={img} eager sizes="100vw" />
-      </div>
+      {img && (
+        <div className="phero__media wrap">
+          <Img name={img} eager sizes="100vw" />
+        </div>
+      )}
     </section>
   )
 }
@@ -56,7 +58,7 @@ export function TicketCards() {
               <li key={p.pl}>{t(p, l)}</li>
             ))}
           </ul>
-          <Btn to={`${href(l, 'tickets')}#kup`} variant={tk.featured ? 'gold' : 'outline'}>
+          <Btn to={`${href(l, 'tickets')}?t=${tk.id}#kup`} variant={tk.featured ? 'gold' : 'outline'}>
             {t(ui.buyTicket, l)}
           </Btn>
         </Reveal>

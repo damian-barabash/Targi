@@ -54,6 +54,7 @@ export const TICKETS: TicketType[] = [
       { pl: 'Wstęp na halę wystawców', en: 'Access to the exhibition hall' },
       { pl: 'Pokazy na scenie głównej', en: 'Main stage shows' },
       { pl: 'Ponowne wejście tego samego dnia', en: 'Same-day re-entry' },
+      { pl: 'Catering do wyboru (+59 zł)', en: 'Optional catering (+PLN 59)' },
     ],
   },
   {
@@ -65,6 +66,7 @@ export const TICKETS: TicketType[] = [
       { pl: 'Wstęp w sobotę i niedzielę', en: 'Entry on Saturday and Sunday' },
       { pl: 'Pokazy i panele dyskusyjne', en: 'Shows and panel talks' },
       { pl: 'Ponowne wejście w oba dni', en: 'Re-entry on both days' },
+      { pl: 'Catering do wyboru (+59 zł / dzień)', en: 'Optional catering (+PLN 59 / day)' },
     ],
     featured: true,
   },
@@ -74,13 +76,33 @@ export const TICKETS: TicketType[] = [
     price: 349,
     note: { pl: 'oba dni + strefa VIP', en: 'both days + VIP lounge' },
     perks: [
-      { pl: 'Strefa VIP z poczęstunkiem', en: 'VIP lounge with catering' },
+      { pl: 'Catering w cenie, oba dni', en: 'Catering included, both days' },
+      { pl: 'Strefa VIP z poczęstunkiem', en: 'VIP lounge with refreshments' },
       { pl: 'Miejsca w pierwszych rzędach', en: 'Front-row seats' },
       { pl: 'Pakiet upominków od partnerów', en: 'Partner gift bag' },
       { pl: 'Osobne, szybkie wejście', en: 'Fast-track entrance' },
     ],
     dark: true,
   },
+]
+
+/** Konfigurator biletu (front, bez backendu). Ceny przykładowe. */
+export const TICKET_DAYS = [
+  { id: 'sat', label: { pl: 'Sobota', en: 'Saturday' } as T, date: '19.02.2028' },
+  { id: 'sun', label: { pl: 'Niedziela', en: 'Sunday' } as T, date: '20.02.2028' },
+]
+export const CATERING = {
+  pricePerDay: 59,
+  name: { pl: 'Catering', en: 'Catering' } as T,
+  desc: { pl: 'Lunch, kawa i przekąski w strefie gastronomicznej', en: 'Lunch, coffee and snacks in the food court' } as T,
+}
+
+/** Twarze wydarzenia — ambasadorzy na stronie głównej. */
+export const FACES: { name: string; role: T; img: string }[] = [
+  { name: 'Anna Wiśniewska', role: { pl: 'Ambasadorka · fryzjerstwo', en: 'Ambassador · hair' }, img: 'expert-2' },
+  { name: 'Julia Nowak', role: { pl: 'Ambasadorka · make-up', en: 'Ambassador · make-up' }, img: 'expert-6' },
+  { name: 'Karolina Mazur', role: { pl: 'Ambasadorka · trychologia', en: 'Ambassador · trichology' }, img: 'expert-1' },
+  { name: 'Natalia Lewandowska', role: { pl: 'Ambasadorka · nails', en: 'Ambassador · nails' }, img: 'expert-5' },
 ]
 
 export type Zone = { slug: T; name: T; short: string; img: string; lead: T; partner: string }
