@@ -1,0 +1,11 @@
+node_modules
+dist
+.vite-react-ssg-temp
+.env
+.env.local
+.secrets
+.DS_Store
+*.log
+
+# oryginały zdjęć (do pobrania z SOURCES.txt); w repo są gotowe WebP w public/img
+assets/photos/*.jpg
