@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
-import { t } from '../i18n'
+import { t, ui } from '../i18n'
 import { FAQ, MASTERCLASSES, TICKETS } from '../content/site'
 import { price } from '../lib/format'
-import { Eyebrow, Reveal, Seo, useLocale } from '../components/ui'
+import { AdSlot, Eyebrow, Reveal, Seo, useLocale } from '../components/ui'
 import { PageHero, SectionHead, SeatsBar, TicketCards } from '../components/sections'
 
 type Line = { id: string; name: string; unit: number; max: number }
@@ -43,7 +43,7 @@ export default function Tickets() {
       <section className="sec sec--tint" id="kup">
         <div className="wrap buy">
           <div className="buy__list">
-            <SectionHead eyebrow={pl ? 'Koszyk' : 'Basket'} title={pl ? 'Złóż zamówienie' : 'Place your order'} />
+            <SectionHead eyebrow={pl ? 'Złóż zamówienie' : 'Place your order'} title={pl ? 'Koszyk' : 'Basket'} />
             {lines.map((x) => {
               const mc = MASTERCLASSES.find((m) => `mc-${m.id}` === x.id)
               return (
@@ -108,8 +108,12 @@ export default function Tickets() {
         </div>
       </section>
 
+      <div className="wrap">
+        <AdSlot id="tickets" label={t(ui.ad, l)} img="zone-cosmetology" />
+      </div>
+
       <section className="sec wrap faq">
-        <SectionHead eyebrow="FAQ" title={pl ? 'Najczęstsze pytania' : 'Frequently asked'} />
+        <SectionHead eyebrow={pl ? 'Najczęstsze pytania' : 'Frequently asked'} title="FAQ" />
         <div className="faq__list">
           {FAQ.map((f) => (
             <details key={f.q.pl} className="faq__item">

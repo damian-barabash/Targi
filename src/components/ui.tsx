@@ -133,7 +133,7 @@ export function Eyebrow({ children }: { children: ReactNode; light?: boolean }) 
   return <p className="kicker">{children}</p>
 }
 
-export function Seo({ title, description, image = 'hero' }: { title: string; description: string; image?: string }) {
+export function Seo({ title, description, image = 'hero-show' }: { title: string; description: string; image?: string }) {
   const l = useLocale()
   const full = title.includes(EVENT.brand) ? title : `${title} · ${EVENT.brand}`
   return (
@@ -152,8 +152,8 @@ export function Seo({ title, description, image = 'hero' }: { title: string; des
 }
 
 /** Miejsce reklamowe. Baner, okres emisji i statystyki przyjdą z panelu.
- *  wide = 1200×200 (pasek), tile = kafel w siatce, bar = pasek partnera głównego. */
-export function AdSlot({ id, label, variant = 'wide' }: { id: string; label: string; variant?: 'wide' | 'tile' | 'bar' }) {
+ *  bar = pasek partnera głównego, wide = baner 1200×300, tile = kafel 600×600. */
+export function AdSlot({ id, label, variant = 'wide', img = 'salon-pink' }: { id: string; label: string; variant?: 'wide' | 'tile' | 'bar'; img?: string }) {
   const l = useLocale()
   const pl = l === 'pl'
   if (variant === 'bar')
@@ -166,12 +166,17 @@ export function AdSlot({ id, label, variant = 'wide' }: { id: string; label: str
     )
   return (
     <aside className={`ad ad--${variant}`} data-ad-slot={id} aria-label={label}>
-      <span className="ad__label">{label}</span>
-      <div className="ad__body">
-        <span className="ad__brand">Atelier Lumière</span>
-        <span className="ad__claim">{pl ? 'Spotkaj nas na stoisku B04' : 'Meet us at stand B04'}</span>
+      <div className="ad__media">
+        <Img name={img} sizes={variant === 'wide' ? '(max-width: 800px) 100vw, 50vw' : '(max-width: 800px) 50vw, 25vw'} />
       </div>
-      <span className="ad__size">{variant === 'wide' ? '1200 × 200' : '600 × 750'}</span>
+      <div className="ad__body">
+        <span className="ad__label">
+          {label} · {variant === 'wide' ? '1200 × 300' : '600 × 600'}
+        </span>
+        <span className="ad__brand">Atelier Lumière</span>
+        <span className="ad__claim">{pl ? 'Nowa kolekcja na targach — stoisko B04' : 'New collection at the expo — stand B04'}</span>
+        <span className="ad__cta">{pl ? 'Sprawdź →' : 'Discover →'}</span>
+      </div>
     </aside>
   )
 }

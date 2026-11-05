@@ -25,14 +25,16 @@ export function PageHero({ title, eyebrow, lead, img, children }: { title: strin
   )
 }
 
-export function SectionHead({ eyebrow, title, children }: { eyebrow?: string; title: ReactNode; children?: ReactNode }) {
+/** Nagłówek sekcji w duchu brutalizmu: ogromny tytuł na całą szerokość. */
+export function SectionHead({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
+  const size = title.length > 14 ? 'mega mega--md' : 'mega'
   return (
     <Reveal className="shead">
-      <div>
-        {eyebrow && <p className="kicker">{eyebrow}</p>}
-        <h2 className="h2">{title}</h2>
+      <h2 className={size}>{title}</h2>
+      <div className="shead__row">
+        {eyebrow ? <p className="kicker">{eyebrow}</p> : <span />}
+        {children && <div className="shead__aside">{children}</div>}
       </div>
-      {children && <div className="shead__aside">{children}</div>}
     </Reveal>
   )
 }

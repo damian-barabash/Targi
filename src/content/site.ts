@@ -196,7 +196,7 @@ export type Expert = { name: string; role: T; img: string }
 export const EXPERTS: Expert[] = [
   { name: 'Anna Wiśniewska', role: { pl: 'Stylistka fryzur, koloryzacja', en: 'Hair stylist, colour' }, img: 'expert-2' },
   { name: 'Julia Nowak', role: { pl: 'Wizażystka', en: 'Make-up artist' }, img: 'expert-6' },
-  { name: 'Amara Okafor', role: { pl: 'Trycholożka', en: 'Trichologist' }, img: 'expert-1' },
+  { name: 'Karolina Mazur', role: { pl: 'Trycholożka', en: 'Trichologist' }, img: 'expert-1' },
   { name: 'Marek Zieliński', role: { pl: 'Ekspert biznesu beauty', en: 'Beauty business expert' }, img: 'expert-4' },
   { name: 'Ewa Kamińska', role: { pl: 'Kosmetolożka', en: 'Cosmetologist' }, img: 'expert-3' },
   { name: 'Natalia Lewandowska', role: { pl: 'Stylistka paznokci', en: 'Nail artist' }, img: 'expert-5' },
@@ -225,7 +225,7 @@ export const PROGRAM: { day: T; date: string; items: ProgramItem[] }[] = [
       { time: '10:30', title: { pl: 'Masterclass: Marketing w beauty', en: 'Masterclass: Beauty marketing' }, stage: { pl: 'Sala A', en: 'Room A' }, host: 'Marek Zieliński' },
       { time: '12:00', title: { pl: 'Mistrzostwa stylizacji paznokci', en: 'Nail art championship' }, stage: { pl: 'Scena Nails', en: 'Nails stage' }, host: 'Natalia Lewandowska', zone: 'nails' },
       { time: '13:30', title: { pl: 'Barber battle', en: 'Barber battle' }, stage: { pl: 'Scena główna', en: 'Main stage' }, zone: 'barber' },
-      { time: '15:00', title: { pl: 'Zdrowe włosy od skóry głowy', en: 'Healthy hair starts at the scalp' }, stage: { pl: 'Scena główna', en: 'Main stage' }, host: 'Amara Okafor', zone: 'hair' },
+      { time: '15:00', title: { pl: 'Zdrowe włosy od skóry głowy', en: 'Healthy hair starts at the scalp' }, stage: { pl: 'Scena główna', en: 'Main stage' }, host: 'Karolina Mazur', zone: 'hair' },
       { time: '17:00', title: { pl: 'Zakończenie i losowanie nagród', en: 'Closing and prize draw' }, stage: { pl: 'Scena główna', en: 'Main stage' } },
     ],
   },
@@ -262,7 +262,7 @@ export const POSTS: Post[] = [
     slug: 'ruszamy-z-pierwsza-edycja',
     title: { pl: 'Ruszamy z pierwszą edycją Beauty & Hair Expo', en: 'The first Beauty & Hair Expo is coming' },
     date: '2026-11-05',
-    img: 'event-auditorium',
+    img: 'event-stage',
     excerpt: {
       pl: 'W lutym 2028 ZEN.COM Expo zamieni się w największe spotkanie branży beauty na Podkarpaciu.',
       en: 'In February 2028 ZEN.COM Expo becomes the biggest beauty industry meeting in south-eastern Poland.',
@@ -282,7 +282,7 @@ export const POSTS: Post[] = [
     slug: 'masterclass-zapisy',
     title: { pl: 'Masterclass: jak wybrać warsztat dla siebie', en: 'Masterclass: how to choose the right workshop' },
     date: '2026-11-04',
-    img: 'mc-team',
+    img: 'news-wash',
     excerpt: {
       pl: 'Liczba miejsc na warsztatach jest ograniczona. Podpowiadamy, na co zwrócić uwagę.',
       en: 'Workshop seats are limited. Here is what to look for.',

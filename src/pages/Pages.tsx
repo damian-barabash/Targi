@@ -17,8 +17,8 @@ export function About() {
   ]
   return (
     <>
-      <Seo title={pl ? 'O targach' : 'About'} description={pl ? 'Beauty & Hair Expo to coroczne targi branży beauty i hair w Rzeszowie. Dla kogo są i co zobaczysz.' : 'Beauty & Hair Expo is an annual beauty and hair trade show in Rzeszów. Who it’s for and what you’ll see.'} image="event-runway" />
-      <PageHero img="event-runway" eyebrow={pl ? 'Pierwsza edycja · 2028' : 'First edition · 2028'} title={pl ? 'O targach' : 'About'} />
+      <Seo title={pl ? 'O targach' : 'About'} description={pl ? 'Beauty & Hair Expo to coroczne targi branży beauty i hair w Rzeszowie. Dla kogo są i co zobaczysz.' : 'Beauty & Hair Expo is an annual beauty and hair trade show in Rzeszów. Who it’s for and what you’ll see.'} image="mc-team" />
+      <PageHero img="mc-team" eyebrow={pl ? 'Pierwsza edycja · 2028' : 'First edition · 2028'} title={pl ? 'O targach' : 'About'} />
 
       <section className="split2 wrap">
         <Reveal className="split2__copy">
@@ -45,14 +45,14 @@ export function About() {
           </p>
         </Reveal>
         <Reveal className="split2__media" delay={100}>
-          <Img name="event-auditorium" sizes="(max-width: 800px) 100vw, 45vw" />
+          <Img name="event-hall" sizes="(max-width: 800px) 100vw, 45vw" />
         </Reveal>
       </section>
 
       <StatsRow />
 
       <section className="sec wrap">
-        <SectionHead eyebrow={pl ? 'Dla kogo' : 'Who it’s for'} title={pl ? 'Dla każdego, kto tworzy piękno' : 'For everyone who creates beauty'} />
+        <SectionHead eyebrow={pl ? 'Dla każdego, kto tworzy piękno' : 'For everyone who creates beauty'} title={pl ? 'Dla kogo' : 'Who for'} />
         <div className="who">
           {who.map((w, i) => (
             <Reveal key={w.img} delay={i * 60} className="who__item">
@@ -65,7 +65,7 @@ export function About() {
 
       <section className="sec sec--tint faq">
         <div className="wrap">
-          <SectionHead eyebrow="FAQ" title={pl ? 'Pytania i odpowiedzi' : 'Questions & answers'} />
+          <SectionHead eyebrow={pl ? 'Pytania i odpowiedzi' : 'Questions & answers'} title="FAQ" />
           <div className="faq__list">
             {FAQ.map((f) => (
               <details key={f.q.pl} className="faq__item">
@@ -97,7 +97,7 @@ export function ZonePage({ zone }: { zone: Zone }) {
         </Reveal>
       </section>
       <section className="sec wrap">
-        <SectionHead eyebrow={pl ? 'Wystawcy w strefie' : 'Exhibitors in this zone'} title={pl ? 'Kogo spotkasz' : 'Who you’ll meet'} />
+        <SectionHead eyebrow={pl ? 'Kogo spotkasz' : 'Who you’ll meet'} title={pl ? 'Wystawcy' : 'Exhibitors'} />
         <div className="cat">
           {list.map((e) => (
             <article key={e.name} className="exh">
@@ -118,7 +118,7 @@ export function ZonePage({ zone }: { zone: Zone }) {
       </section>
       <section className="sec sec--tint">
         <div className="wrap">
-          <SectionHead eyebrow={pl ? 'Inne strefy' : 'Other zones'} title={pl ? 'Zobacz także' : 'See also'} />
+          <SectionHead eyebrow={pl ? 'Zobacz także' : 'See also'} title={pl ? 'Inne strefy' : 'Other zones'} />
           <div className="zone-links">
             {ZONES.filter((z) => z.short !== zone.short).map((z) => (
               <Link key={z.short} to={href(l, 'zone', t(z.slug, l))} className="chip chip--lg">
@@ -149,7 +149,7 @@ export function Partners() {
       </section>
       <section className="sec sec--tint">
         <div className="wrap">
-          <SectionHead eyebrow={pl ? 'Pakiety' : 'Packages'} title={pl ? 'Zostań partnerem lub reklamodawcą' : 'Become a partner or advertiser'} />
+          <SectionHead eyebrow={pl ? 'Zostań partnerem lub reklamodawcą' : 'Become a partner or advertiser'} title={pl ? 'Pakiety' : 'Packages'} />
           <div className="packs">
             {packs.map((p, i) => (
               <Reveal as="article" key={p.name.pl} delay={i * 70} className="pack">
@@ -273,7 +273,7 @@ export function PostPage({ post }: { post: Post }) {
       </article>
       <section className="sec sec--tint">
         <div className="wrap">
-          <SectionHead title={pl ? 'Czytaj także' : 'Read next'} />
+          <SectionHead eyebrow={pl ? 'Czytaj także' : 'Read next'} title={pl ? 'Czytaj dalej' : 'Read next'} />
           <NewsCards limit={3} />
         </div>
       </section>

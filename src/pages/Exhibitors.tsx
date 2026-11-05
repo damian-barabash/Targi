@@ -79,7 +79,7 @@ export function Exhibit() {
       </PageHero>
 
       <section className="sec wrap">
-        <SectionHead eyebrow={pl ? 'Co możesz zyskać' : 'What you get'} title={pl ? 'Pakiet szyty na miarę' : 'A tailor-made package'}>
+        <SectionHead eyebrow={pl ? 'Pakiet szyty na miarę' : 'A tailor-made package'} title={pl ? 'Oferta' : 'Offer'}>
           <p>{pl ? 'Cennik i pakiety przekażemy po zgłoszeniu.' : 'We’ll send prices and packages after you apply.'}</p>
         </SectionHead>
         <div className="offer">

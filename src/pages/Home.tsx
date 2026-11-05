@@ -2,13 +2,14 @@ import { Link } from 'react-router-dom'
 import { href, t, ui } from '../i18n'
 import { EVENT, POSTS } from '../content/site'
 import { AdSlot, Btn, Countdown, Img, More, Reveal, Seo, useLocale } from '../components/ui'
+import { imgSrc } from '../lib/img'
 import { ExpertsGrid, LogoWall, MasterclassList, NewsletterBlock, SectionHead, StatsRow, TicketCards, ZoneCards } from '../components/sections'
 
 export default function Home() {
   const l = useLocale()
   const pl = l === 'pl'
   const features = [
-    { img: 'event-runway', name: { pl: 'Pokazy na scenie', en: 'Stage shows' }, meta: { pl: 'Scena główna', en: 'Main stage' }, to: href(l, 'program') },
+    { img: 'mc-team', name: { pl: 'Pokazy na scenie', en: 'Stage shows' }, meta: { pl: 'Scena główna', en: 'Main stage' }, to: href(l, 'program') },
     { img: 'mc-blowdry', name: { pl: 'Masterclass', en: 'Masterclasses' }, meta: { pl: '25 warsztatów', en: '25 workshops' }, to: `${href(l, 'program')}#masterclass` },
     { img: 'event-booth', name: { pl: 'Stoiska marek', en: 'Brand stands' }, meta: { pl: '120+ wystawców', en: '120+ exhibitors' }, to: href(l, 'exhibitors') },
     { img: 'event-networking', name: { pl: 'Spotkania B2B', en: 'B2B meetings' }, meta: { pl: 'Strefa VIP', en: 'VIP lounge' }, to: href(l, 'about') },
@@ -27,7 +28,15 @@ export default function Home() {
 
       {/* HERO — ogromny wordmark na zdjęciu, pod nim spokojny podpis i przyciski */}
       <section className="hero">
-        <Img name="hero" className="hero__img" eager sizes="100vw" alt="" />
+        <img
+          className="hero__img"
+          src={imgSrc('hero-show', 1600)}
+          srcSet={`${imgSrc('hero-show', 800)} 800w, ${imgSrc('hero-show', 1600)} 1600w, ${import.meta.env.BASE_URL}img/hero-show-2400.webp 2400w`}
+          sizes="100vw"
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+        />
         <div className="hero__wash" />
         <h1 className="hero__mark">
           Beauty &amp; Hair
@@ -81,6 +90,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Baner partnera strategicznego */}
+      <div className="wrap">
+        <AdSlot id="home-top-wide" label={t(ui.ad, l)} img="salon-pink" />
+      </div>
+
       {/* Split: tekst + duże zdjęcie */}
       <section className="split2 wrap">
         <Reveal className="split2__copy">
@@ -124,7 +138,7 @@ export default function Home() {
 
       {/* Bilety */}
       <section className="sec wrap" id="bilety">
-        <SectionHead eyebrow={pl ? 'Bilety' : 'Tickets'} title={pl ? 'Wybierz bilet' : 'Choose your ticket'}>
+        <SectionHead eyebrow={pl ? 'Wybierz bilet' : 'Choose your ticket'} title={pl ? 'Bilety' : 'Tickets'}>
           <p className="muted">{pl ? 'E-bilet z kodem QR na e-mail. BLIK, karta, Apple Pay, Google Pay.' : 'E-ticket with a QR code by e-mail. BLIK, card, Apple Pay, Google Pay.'}</p>
         </SectionHead>
         <TicketCards />
@@ -132,7 +146,7 @@ export default function Home() {
 
       {/* Strefy */}
       <section className="sec wrap">
-        <SectionHead eyebrow={pl ? 'Strefy tematyczne' : 'Themed zones'} title={pl ? 'Pięć stref, pięciu partnerów' : 'Five zones, five partners'}>
+        <SectionHead eyebrow={pl ? 'Pięć stref, pięciu partnerów' : 'Five zones, five partners'} title={pl ? 'Strefy' : 'Zones'}>
           <p className="muted">{pl ? 'Każdą strefę współtworzy partner — jego marka, scena i pokazy.' : 'Each zone is co-created by a partner — their brand, stage and shows.'}</p>
         </SectionHead>
         <ZoneCards />
@@ -141,7 +155,7 @@ export default function Home() {
       {/* Dla wystawców: zdjęcie po lewej, tekst po prawej */}
       <section className="split2 split2--rev wrap">
         <Reveal className="split2__media">
-          <Img name="event-crowd" sizes="(max-width: 800px) 100vw, 55vw" />
+          <Img name="mc-seminar" sizes="(max-width: 800px) 100vw, 55vw" />
         </Reveal>
         <Reveal className="split2__copy" delay={80}>
           <p className="kicker">{pl ? 'Wystawcy i partnerzy' : 'Exhibitors & partners'}</p>
@@ -161,7 +175,7 @@ export default function Home() {
 
       {/* Masterclass */}
       <section className="sec wrap" id="masterclass">
-        <SectionHead eyebrow="Masterclass" title={pl ? 'Warsztaty z limitem miejsc' : 'Workshops with limited seats'}>
+        <SectionHead eyebrow={pl ? 'Warsztaty z limitem miejsc' : 'Workshops with limited seats'} title="Masterclass">
           <More to={href(l, 'program')}>{pl ? 'Cały program' : 'Full programme'}</More>
         </SectionHead>
         <MasterclassList />
@@ -169,12 +183,12 @@ export default function Home() {
 
       {/* Baner szeroki */}
       <div className="wrap">
-        <AdSlot id="home-wide" label={t(ui.ad, l)} />
+        <AdSlot id="home-wide" label={t(ui.ad, l)} img="zone-hair" />
       </div>
 
       {/* Eksperci */}
       <section className="sec wrap">
-        <SectionHead eyebrow={pl ? 'Eksperci' : 'Experts'} title={pl ? 'Na scenie wystąpią' : 'On stage'}>
+        <SectionHead eyebrow={pl ? 'Na scenie wystąpią' : 'On stage'} title={pl ? 'Eksperci' : 'Speakers'}>
           <More to={`${href(l, 'program')}#eksperci`}>{pl ? 'Wszyscy prelegenci' : 'All speakers'}</More>
         </SectionHead>
         <ExpertsGrid limit={4} />
@@ -182,7 +196,7 @@ export default function Home() {
 
       {/* Partnerzy */}
       <section className="sec wrap">
-        <SectionHead eyebrow={pl ? 'Partnerzy i sponsorzy' : 'Partners & sponsors'} title={pl ? 'Razem tworzymy targi' : 'Building the expo together'}>
+        <SectionHead eyebrow={pl ? 'Razem tworzymy targi' : 'Building the expo together'} title={pl ? 'Partnerzy' : 'Partners'}>
           <More to={href(l, 'partners')}>{pl ? 'Zostań partnerem' : 'Become a partner'}</More>
         </SectionHead>
         <LogoWall compact />
@@ -206,7 +220,7 @@ export default function Home() {
             </p>
             <p>{pl ? 'dwa dni, w których cała branża jest w jednym miejscu.' : 'two days when the whole industry is in one place.'}</p>
           </div>
-          <AdSlot id="home-feed" label={t(ui.ad, l)} variant="tile" />
+          <AdSlot id="home-feed" label={t(ui.ad, l)} variant="tile" img="nails-dark" />
           <Link to={href(l, 'post', POSTS[1].slug)} className="feed__tile">
             <Img name={POSTS[1].img} sizes="(max-width: 800px) 50vw, 25vw" />
             <span className="feed__cap">{t(POSTS[1].title, l)}</span>
@@ -237,7 +251,7 @@ export default function Home() {
           <More to={href(l, 'visit')}>{pl ? 'Jak dojechać' : 'Getting there'}</More>
         </Reveal>
         <Reveal className="split2__media" delay={80}>
-          <Img name="event-venue" sizes="(max-width: 800px) 100vw, 55vw" />
+          <Img name="event-hall" sizes="(max-width: 800px) 100vw, 55vw" />
         </Reveal>
       </section>
 

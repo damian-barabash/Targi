@@ -62,13 +62,13 @@ export default function Program() {
 
       <section className="sec sec--tint" id="masterclass">
         <div className="wrap">
-          <SectionHead eyebrow="Masterclass" title={pl ? 'Warsztaty z limitem miejsc' : 'Workshops with limited seats'} />
+          <SectionHead eyebrow={pl ? 'Warsztaty z limitem miejsc' : 'Workshops with limited seats'} title="Masterclass" />
           <MasterclassList />
         </div>
       </section>
 
       <section className="sec wrap" id="eksperci">
-        <SectionHead eyebrow={pl ? 'Eksperci' : 'Experts'} title={pl ? 'Prelegenci i trenerzy' : 'Speakers and trainers'} />
+        <SectionHead eyebrow={pl ? 'Prelegenci i trenerzy' : 'Speakers and trainers'} title={pl ? 'Eksperci' : 'Speakers'} />
         <ExpertsGrid />
         <Reveal className="ad-wrap">
           <AdSlot id="program" label={t(ui.ad, l)} />

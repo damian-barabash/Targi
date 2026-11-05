@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useMatches } from 'react-router-dom'
 import { href, t, ui, type Locale } from '../i18n'
-import { EVENT } from '../content/site'
+import { EVENT, PARTNERS } from '../content/site'
 import { LocaleCtx } from './ui'
+import Motion from './Motion'
 
 export type RouteHandle = { alt: Record<Locale, string>; plain?: boolean }
 
@@ -13,7 +14,9 @@ export default function Layout({ locale }: { locale: Locale }) {
       <main id="main">
         <Outlet />
       </main>
+      <PartnerStrip locale={locale} />
       <Footer locale={locale} />
+      <Motion />
       <ScrollRestoration />
     </LocaleCtx.Provider>
   )
@@ -54,7 +57,7 @@ function Header({ locale: l }: { locale: Locale }) {
   const other: Locale = l === 'pl' ? 'en' : 'pl'
 
   return (
-    <header className={`hdr ${scrolled ? 'hdr--solid' : ''} ${open ? 'hdr--open' : ''}`}>
+    <header className={`hdr ${scrolled ? 'hdr--solid' : ''} ${open ? 'hdr--open' : ''} ${isHome && !scrolled && !open ? 'hdr--onphoto' : ''}`}>
       <div className="hdr__bar">
         <nav className="hdr__nav" aria-label="Menu">
           {left.map((x) => (
@@ -107,6 +110,28 @@ function Header({ locale: l }: { locale: Locale }) {
         </div>
       </div>
     </header>
+  )
+}
+
+/** Pas partnerów na każdej stronie — stałe miejsce na logotypy sponsorów. */
+function PartnerStrip({ locale: l }: { locale: Locale }) {
+  const names = PARTNERS.slice(0, 3).flatMap((g) => g.names)
+  return (
+    <section className="pstrip wrap" aria-label={l === 'pl' ? 'Partnerzy' : 'Partners'}>
+      <div className="pstrip__head">
+        <p className="kicker">{l === 'pl' ? 'Partnerzy Beauty & Hair Expo' : 'Beauty & Hair Expo partners'}</p>
+        <Link className="more" to={href(l, 'partners')}>
+          {l === 'pl' ? 'Zostań partnerem →' : 'Become a partner →'}
+        </Link>
+      </div>
+      <div className="pstrip__row">
+        {names.map((n, i) => (
+          <span key={n} className={`pstrip__logo ${i === 0 ? 'pstrip__logo--main' : ''}`}>
+            {n}
+          </span>
+        ))}
+      </div>
+    </section>
   )
 }
 
