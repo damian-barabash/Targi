@@ -180,3 +180,46 @@ export function AdSlot({ id, label, variant = 'wide', img = 'salon-pink' }: { id
     </aside>
   )
 }
+
+/** Przykładowe banery partnerów (kreacje robocze). Docelowo: grafika z panelu, okres emisji, licznik wyświetleń i kliknięć. */
+const BANNERS = {
+  gold: {
+    brand: 'Maison Coiffure',
+    claim: { pl: 'Kolekcja Lumière 2028 — premiera na scenie głównej', en: 'Lumière 2028 collection — premiere on the main stage' },
+    cta: { pl: 'Zobacz pokaz', en: 'See the show' },
+    kicker: { pl: 'Partner strategiczny', en: 'Strategic partner' },
+  },
+  dark: {
+    brand: 'Derma Lab',
+    claim: { pl: '−20% na aparaturę tylko w dniach targów', en: '−20% on devices during the expo only' },
+    cta: { pl: 'Stoisko D01', en: 'Stand D01' },
+    kicker: { pl: 'Oferta targowa', en: 'Expo offer' },
+  },
+  photo: {
+    brand: 'Nude Studio',
+    claim: { pl: 'Mistrzostwa stylizacji paznokci — zapisz się', en: 'Nail art championship — sign up' },
+    cta: { pl: 'Zapisy', en: 'Sign up' },
+    kicker: { pl: 'Partner strefy Nails', en: 'Nails Zone partner' },
+  },
+} as const
+
+export function Banner({ id, variant, wide = false }: { id: string; variant: keyof typeof BANNERS; wide?: boolean }) {
+  const l = useLocale()
+  const b = BANNERS[variant]
+  return (
+    <a className={`bnr bnr--${variant} ${wide ? 'bnr--wide' : ''}`} href="#" onClick={(e) => e.preventDefault()} data-ad-slot={id}>
+      {variant === 'photo' && (
+        <span className="bnr__bg">
+          <Img name="zone-nails" sizes="(max-width: 800px) 100vw, 50vw" />
+        </span>
+      )}
+      <span className="bnr__label">
+        {l === 'pl' ? 'Reklama' : 'Ad'} · {wide ? '1440 × 360' : '720 × 360'}
+      </span>
+      <span className="bnr__kicker">{b.kicker[l]}</span>
+      <span className="bnr__brand">{b.brand}</span>
+      <span className="bnr__claim">{b.claim[l]}</span>
+      <span className="bnr__cta">{b.cta[l]} →</span>
+    </a>
+  )
+}

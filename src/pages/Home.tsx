@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { href, t, ui } from '../i18n'
 import { EVENT, FACES, POSTS } from '../content/site'
-import { AdSlot, Btn, Countdown, Img, More, Reveal, Seo, useLocale } from '../components/ui'
+import { AdSlot, Banner, Btn, Countdown, Img, More, Reveal, Seo, useLocale } from '../components/ui'
 import { ExpertsGrid, LogoWall, MasterclassList, NewsletterBlock, SectionHead, StatsRow, TicketCards, ZoneCards } from '../components/sections'
 
 export default function Home() {
@@ -55,20 +55,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <div className="hero2__faces wrap">
-          {FACES.map((f, i) => (
-            <figure key={f.name} className="face" style={{ animationDelay: `${0.15 + i * 0.08}s` }}>
-              <div className="tile__media face__media">
-                <Img name={f.img} eager sizes="(max-width: 700px) 50vw, 25vw" alt={f.name} />
-              </div>
-              <figcaption>
-                <span className="face__name">{f.name}</span>
-                <span className="face__role">{t(f.role, l)}</span>
-              </figcaption>
-            </figure>
-          ))}
-          <p className="hero2__faces-k">{pl ? 'Twarze Beauty & Hair Expo' : 'Faces of Beauty & Hair Expo'}</p>
-        </div>
       </section>
 
       {/* Pasek partnera głównego — pierwsze miejsce reklamowe */}
@@ -82,6 +68,48 @@ export default function Home() {
           <p className="muted">{pl ? 'E-bilet z kodem QR na e-mail. BLIK, karta, Apple Pay, Google Pay.' : 'E-ticket with a QR code by e-mail. BLIK, card, Apple Pay, Google Pay.'}</p>
         </SectionHead>
         <TicketCards />
+      </section>
+
+      {/* Zdjęcie sali — szeroki kadr z paralaksą między biletami a twarzami */}
+      <section className="pband">
+        <div className="pband__media">
+          <Img name="hero-venue" sizes="100vw" />
+        </div>
+        <div className="pband__cap wrap">
+          <span>{EVENT.venue}</span>
+          <span>{t(EVENT.city, l)}</span>
+        </div>
+      </section>
+
+      {/* Twarze wydarzenia — na razie miejsca na zdjęcia ambasadorek */}
+      <section className="sec wrap">
+        <SectionHead eyebrow={pl ? 'Twarze Beauty & Hair Expo' : 'Faces of Beauty & Hair Expo'} title={pl ? 'Twarze' : 'Faces'}>
+          <p className="muted">{pl ? 'Ambasadorki pierwszej edycji — zdjęcia wkrótce.' : 'Ambassadors of the first edition — photos coming soon.'}</p>
+        </SectionHead>
+        <div className="grid4">
+          {FACES.map((f, i) => (
+            <Reveal as="article" key={f.name} delay={i * 60} className="face">
+              <div className="ph ph--portrait" role="img" aria-label={pl ? `Miejsce na zdjęcie: ${f.name}` : `Photo placeholder: ${f.name}`}>
+                <svg viewBox="0 0 120 160" aria-hidden="true">
+                  <circle cx="60" cy="58" r="24" />
+                  <path d="M16 160c0-30 20-50 44-50s44 20 44 50z" />
+                </svg>
+                <span className="ph__label">{pl ? 'Zdjęcie wkrótce' : 'Photo coming soon'}</span>
+              </div>
+              <div className="face__cap">
+                <span className="face__name">{f.name}</span>
+                <span className="face__role">{t(f.role, l)}</span>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Banery partnerów — 3 przykładowe kreacje */}
+      <section className="wrap banners" aria-label={pl ? 'Banery partnerów' : 'Partner banners'}>
+        <Banner id="home-b1" variant="gold" wide />
+        <Banner id="home-b2" variant="dark" />
+        <Banner id="home-b3" variant="photo" />
       </section>
 
       {/* Co jest na targach — siatka 4 kafli */}
@@ -102,11 +130,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* Baner partnera strategicznego */}
-      <div className="wrap">
-        <AdSlot id="home-top-wide" label={t(ui.ad, l)} img="salon-pink" />
-      </div>
 
       {/* Split: tekst + duże zdjęcie */}
       <section className="split2 wrap">

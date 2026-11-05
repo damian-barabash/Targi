@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
  * Lekkie: jedna pętla rAF, liczymy tylko widoczne zdjęcia (IntersectionObserver),
  * zmieniamy wyłącznie transform (GPU). Wyłączone na dotyku i przy reduced motion.
  */
-const SELECTOR = '.hero__img, .phero__media img, .split2__media img, .tile__media img, .feed__tile img, .pfx-img'
+const SELECTOR = '.hero__img, .pband__media img, .phero__media img, .split2__media img, .tile__media img, .feed__tile img, .pfx-img'
 
 export default function Motion() {
   const { pathname } = useLocation()
