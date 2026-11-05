@@ -30,8 +30,8 @@ export default function Home() {
       <section className="hero">
         <img
           className="hero__img"
-          src={imgSrc('hero-show', 1600)}
-          srcSet={`${imgSrc('hero-show', 800)} 800w, ${imgSrc('hero-show', 1600)} 1600w, ${import.meta.env.BASE_URL}img/hero-show-2400.webp 2400w`}
+          src={imgSrc('hero-venue', 1600)}
+          srcSet={`${imgSrc('hero-venue', 800)} 800w, ${imgSrc('hero-venue', 1600)} 1600w, ${import.meta.env.BASE_URL}img/hero-venue-2400.webp 2400w`}
           sizes="100vw"
           alt=""
           fetchPriority="high"
