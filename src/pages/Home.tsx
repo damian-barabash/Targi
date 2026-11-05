@@ -60,7 +60,15 @@ export default function Home() {
       {/* Krótki pas ze zdjęciem między hero a biletami */}
       <section className="pband pband--short" aria-hidden="true">
         <div className="pband__media">
-          <Img name="mc-team" sizes="100vw" />
+          {/* wysoka rozdzielczość — pas na całą szerokość, także na ekranach retina */}
+          <img
+            src={`${import.meta.env.BASE_URL}img/strip-makeup-1400.webp`}
+            srcSet={`${import.meta.env.BASE_URL}img/strip-makeup-800.webp 800w, ${import.meta.env.BASE_URL}img/strip-makeup-1400.webp 1400w`}
+            sizes="100vw"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </section>
 

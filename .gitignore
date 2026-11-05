@@ -9,3 +9,6 @@ dist
 
 # oryginały zdjęć (do pobrania z SOURCES.txt); w repo są gotowe WebP w public/img
 assets/photos/*.jpg
+
+# podglądy QC (lokalnie)
+.qc
