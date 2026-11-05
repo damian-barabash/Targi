@@ -27,4 +27,4 @@ event-speaker 1762968274962-20c12e6e8ecd
 expert-1 1494790108377-be9c29b29330
 expert-4 1560250097-0b93528c311a
 expert-5 1580489944761-15a19d654956
-strip-makeup — zdjęcie od klienta/użytkownika (2026-11-05), kadr 1400×300 z oryginału 1500×998
+strip-makeup — zdjęcie od użytkownika (2026-11-05), Real-ESRGAN x4plus ×4 → kadr 2800×600
