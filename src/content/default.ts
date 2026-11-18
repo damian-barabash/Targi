@@ -1,0 +1,636 @@
+// Treści domyślne (robocze). Służą jako zasiew bazy i jako awaryjna wersja, gdy build nie pobierze migawki.
+import type { T } from '../i18n'
+import type { Block, PageDoc, SiteData } from './types'
+
+const T2 = (pl: string, en: string): T => ({ pl, en })
+const same = (s: string): T => ({ pl: s, en: s })
+let n = 0
+const b = (type: string, props: Record<string, any> = {}): Block => ({ id: `b${++n}`, type, props })
+const head = (eyebrow: T, title: T, text?: T, more?: { label: T; link: string }) => ({ eyebrow, title, text: text ?? same(''), more: more ?? { label: same(''), link: '' } })
+const BUY = T2('Kup bilet', 'Buy a ticket')
+const EXH = T2('Zostań wystawcą', 'Become an exhibitor')
+
+const page = (id: string, order: number, slug: T, title: T, description: T, image: string | undefined, blocks: Block[], plain = false): PageDoc => ({
+  id,
+  system: true,
+  slug,
+  title,
+  seo: { title, description, image },
+  plain,
+  order,
+  blocks,
+})
+
+const pages: PageDoc[] = [
+  page(
+    'home',
+    0,
+    same(''),
+    same('Beauty & Hair Expo Rzeszów 2028'),
+    T2(
+      'Targi branży beauty i hair 19–20 lutego 2028 w ZEN.COM Expo pod Rzeszowem. Pokazy, masterclass, wystawcy i partnerzy. Bilety online.',
+      'Beauty and hair trade show, 19–20 February 2028 at ZEN.COM Expo near Rzeszów. Shows, masterclasses, exhibitors and partners. Tickets online.',
+    ),
+    'mc-team',
+    [
+      b('hero', {
+        countdownLabel: T2('Do otwarcia', 'Opens in'),
+        btn1: { label: BUY, link: 'page:tickets' },
+        btn2: { label: EXH, link: 'page:exhibit' },
+      }),
+      b('photoStrip', { img: 'strip-show' }),
+      b('ad', { slot: 'home-main-partner', format: 'bar' }),
+      b('tickets', { anchor: 'bilety', ...head(T2('Wybierz bilet', 'Choose your ticket'), T2('Bilety', 'Tickets'), T2('E-bilet z kodem QR na e-mail. BLIK, karta, Apple Pay, Google Pay.', 'E-ticket with a QR code by e-mail. BLIK, card, Apple Pay, Google Pay.')) }),
+      b('faces', { ...head(T2('Twarze Beauty & Hair Expo', 'Faces of Beauty & Hair Expo'), T2('Twarze', 'Faces'), T2('Ambasadorki pierwszej edycji. Zdjęcia przykładowe.', 'Ambassadors of the first edition. Sample photos.')), sample: true }),
+      b('banners', { items: [{ slot: 'home-b1', wide: true }, { slot: 'home-b2', wide: false }, { slot: 'home-b3', wide: false }] }),
+      b('tiles', {
+        items: [
+          { img: 'event-speaker', name: T2('Pokazy na scenie', 'Stage shows'), meta: T2('Scena główna', 'Main stage'), link: 'page:program' },
+          { img: 'mc-blowdry', name: T2('Masterclass', 'Masterclasses'), meta: T2('25 warsztatów', '25 workshops'), link: 'page:program#masterclass' },
+          { img: 'event-booth', name: T2('Stoiska marek', 'Brand stands'), meta: T2('120+ wystawców', '120+ exhibitors'), link: 'page:exhibitors' },
+          { img: 'event-networking', name: T2('Spotkania B2B', 'B2B meetings'), meta: T2('Strefa VIP', 'VIP lounge'), link: 'page:about' },
+        ],
+      }),
+      b('split', {
+        kicker: T2('Pierwsza edycja', 'First edition'),
+        title: T2('Dwa dni, w których branża beauty spotyka się na żywo', 'Two days when the beauty industry meets in person'),
+        text: T2(
+          'Pokazy fryzur i makijażu, warsztaty z ekspertami, premiery marek i rozmowy, które kończą się współpracą.',
+          'Hair and make-up shows, expert workshops, brand launches and conversations that turn into partnerships.',
+        ),
+        list: [],
+        facts: [],
+        btn: { label: T2('Kup bilet · od 79 zł', 'Buy a ticket · from PLN 79'), link: 'page:tickets', variant: 'gold' },
+        more: { label: same(''), link: '' },
+        img: 'event-stage',
+        reverse: false,
+      }),
+      b('band', {
+        kicker: T2('Dla marek', 'For brands'),
+        text: T2(
+          'Tu marki spotykają salony, a partnerzy docierają do tysięcy profesjonalistów — na hali, na scenie i w naszych kanałach.',
+          'Here brands meet salons, and partners reach thousands of professionals — in the hall, on stage and across our channels.',
+        ),
+        btn1: { label: EXH, link: 'page:exhibit' },
+        btn2: { label: T2('Zostań partnerem', 'Become a partner'), link: 'page:partners' },
+      }),
+      b('stats'),
+      b('zones', head(T2('Pięć stref, pięciu partnerów', 'Five zones, five partners'), T2('Strefy', 'Zones'), T2('Każdą strefę współtworzy partner — jego marka, scena i pokazy.', 'Each zone is co-created by a partner — their brand, stage and shows.'))),
+      b('split', {
+        kicker: T2('Wystawcy i partnerzy', 'Exhibitors & partners'),
+        title: T2('Twoja marka przed tysiącami profesjonalistów', 'Your brand in front of thousands of professionals'),
+        text: same(''),
+        list: [
+          T2('Stoisko i branding na hali', 'A stand and in-hall branding'),
+          T2('Kampania w naszych social media i newsletterze', 'A campaign on our social media and newsletter'),
+          T2('Wywiady, rolki i live ze studia wideo', 'Interviews, reels and live from our video studio'),
+          T2('Banery na stronie z raportem wyświetleń i kliknięć', 'Website banners with view and click reports'),
+        ],
+        facts: [],
+        btn: { label: EXH, link: 'page:exhibit', variant: 'dark' },
+        more: { label: T2('Pakiety partnerskie', 'Partner packages'), link: 'page:partners' },
+        img: 'mc-seminar',
+        reverse: true,
+      }),
+      b('masterclasses', { anchor: 'masterclass', tint: false, ...head(T2('Warsztaty z limitem miejsc', 'Workshops with limited seats'), same('Masterclass'), undefined, { label: T2('Cały program', 'Full programme'), link: 'page:program' }) }),
+      b('ad', { slot: 'home-wide', format: 'wide' }),
+      b('experts', { limit: 4, ...head(T2('Na scenie wystąpią', 'On stage'), T2('Eksperci', 'Speakers'), undefined, { label: T2('Wszyscy prelegenci', 'All speakers'), link: 'page:program#eksperci' }) }),
+      b('partners', { compact: true, ...head(T2('Razem tworzymy targi', 'Building the expo together'), T2('Partnerzy', 'Partners'), undefined, { label: T2('Zostań partnerem', 'Become a partner'), link: 'page:partners' }) }),
+      b('feed', {
+        kicker: T2('Aktualności', 'News'),
+        title: T2('Z życia targów', 'From the expo'),
+        more: { label: T2('Wszystkie wpisy', 'All posts'), link: 'page:news' },
+        quoteTitle: T2('*Targi* (rzecz.):', '*Expo* (noun):'),
+        quoteText: T2('dwa dni, w których cała branża jest w jednym miejscu.', 'two days when the whole industry is in one place.'),
+        slot: 'home-feed',
+      }),
+      b('split', {
+        kicker: T2('Miejsce', 'Venue'),
+        title: same('ZEN.COM Expo'),
+        text: T2(
+          'Centrum wystawiennicze tuż przy lotnisku Rzeszów-Jasionka i autostradzie A4. Parking przy hali.',
+          'An exhibition centre next to Rzeszów-Jasionka Airport and the A4 motorway. Parking by the hall.',
+        ),
+        list: [],
+        facts: [
+          { k: T2('Adres', 'Address'), v: same('Jasionka 953, 36-002 Jasionka') },
+          { k: T2('Godziny', 'Hours'), v: same('10:00–18:00') },
+        ],
+        btn: { label: same(''), link: '' },
+        more: { label: T2('Jak dojechać', 'Getting there'), link: 'page:visit' },
+        img: 'event-hall',
+        reverse: false,
+      }),
+      b('newsletter', {
+        title: T2('Nie przegap startu sprzedaży', 'Don’t miss the ticket launch'),
+        text: T2('Bilety, nowi prelegenci i wolne miejsca na masterclass.', 'Tickets, new speakers and free masterclass seats.'),
+      }),
+    ],
+  ),
+
+  page(
+    'about',
+    1,
+    T2('o-targach', 'about'),
+    T2('O targach', 'About'),
+    T2('Beauty & Hair Expo to coroczne targi branży beauty i hair w Rzeszowie. Dla kogo są i co zobaczysz.', 'Beauty & Hair Expo is an annual beauty and hair trade show in Rzeszów. Who it’s for and what you’ll see.'),
+    'mc-team',
+    [
+      b('pageHero', { title: T2('O targach', 'About'), eyebrow: T2('Pierwsza edycja · 2028', 'First edition · 2028'), lead: same(''), img: 'mc-team' }),
+      b('split', {
+        kicker: same('Beauty & Hair Expo'),
+        title: T2('Targi, które *inspirują* i sprzedają', 'A show that *inspires* and sells'),
+        text: T2(
+          'Tworzymy coroczne wydarzenie, na którym branża beauty z Polski i zagranicy pokazuje nowości, uczy się od ekspertów i nawiązuje współpracę. Startujemy w lutym 2028 w ZEN.COM Expo pod Rzeszowem.\n\nOrganizatorem jest Fundacja Wielkie Serce dla Dzieci.',
+          'We’re building an annual event where the beauty industry from Poland and abroad shows new products, learns from experts and builds partnerships. We launch in February 2028 at ZEN.COM Expo near Rzeszów.\n\nThe organiser is Fundacja Wielkie Serce dla Dzieci.',
+        ),
+        list: [],
+        facts: [],
+        btn: { label: same(''), link: '' },
+        more: { label: same(''), link: '' },
+        img: 'event-hall',
+        reverse: false,
+      }),
+      b('stats'),
+      b('imageCards', {
+        ...head(T2('Dla każdego, kto tworzy piękno', 'For everyone who creates beauty'), T2('Dla kogo', 'Who for')),
+        items: [
+          { img: 'mc-blowdry', title: T2('Fryzjerzy i styliści', 'Hairdressers & stylists') },
+          { img: 'news-facial', title: T2('Kosmetolodzy', 'Cosmetologists') },
+          { img: 'nails-dark', title: T2('Wizażyści i stylistki paznokci', 'Make-up & nail artists') },
+          { img: 'salon-pink', title: T2('Właściciele salonów', 'Salon owners') },
+        ],
+      }),
+      b('faq', { tint: true, ...head(T2('Pytania i odpowiedzi', 'Questions & answers'), same('FAQ')), noteKicker: same(''), noteText: same('') }),
+      b('band', {
+        kicker: T2('19–20 lutego 2028', '19–20 February 2028'),
+        text: T2('Do zobaczenia w ZEN.COM Expo.', 'See you at ZEN.COM Expo.'),
+        btn1: { label: BUY, link: 'page:tickets' },
+        btn2: { label: EXH, link: 'page:exhibit' },
+      }),
+    ],
+  ),
+
+  page(
+    'program',
+    2,
+    T2('program', 'programme'),
+    T2('Program', 'Programme'),
+    T2('Program Beauty & Hair Expo 2028: pokazy, panele, masterclass i warsztaty w dwóch dniach targów.', 'Beauty & Hair Expo 2028 programme: shows, panels, masterclasses and workshops over two days.'),
+    'event-stage',
+    [
+      b('pageHero', {
+        title: T2('Program', 'Programme'),
+        eyebrow: T2('Sceny · panele · warsztaty', 'Stages · panels · workshops'),
+        lead: T2('Dwa dni, trzy sceny i kilkadziesiąt wystąpień. Program będzie uzupełniany.', 'Two days, three stages and dozens of sessions. More to be announced.'),
+        img: 'event-stage',
+      }),
+      b('schedule'),
+      b('masterclasses', { anchor: 'masterclass', tint: true, ...head(T2('Warsztaty z limitem miejsc', 'Workshops with limited seats'), same('Masterclass')) }),
+      b('experts', { anchor: 'eksperci', limit: 0, ...head(T2('Prelegenci i trenerzy', 'Speakers and trainers'), T2('Eksperci', 'Speakers')) }),
+      b('ad', { slot: 'program', format: 'wide' }),
+    ],
+  ),
+
+  page(
+    'tickets',
+    3,
+    T2('bilety', 'tickets'),
+    T2('Bilety', 'Tickets'),
+    T2(
+      'Bilet jednodniowy lub dwudniowy, z cateringiem lub bez. VIP i masterclass. E-bilet z kodem QR — Beauty & Hair Expo Rzeszów 2028.',
+      'One-day or two-day ticket, with or without catering. VIP and masterclasses. E-ticket with a QR code — Beauty & Hair Expo Rzeszów 2028.',
+    ),
+    'mc-team',
+    [
+      b('pageHero', {
+        title: T2('Bilety', 'Tickets'),
+        eyebrow: T2('Bilety · 19–20.02.2028', 'Tickets · 19–20.02.2028'),
+        lead: T2('Wybierz bilet jednodniowy lub dwudniowy, dodaj catering i zapłać online. Bilet z kodem QR przyjdzie na e-mail.', 'Choose a one-day or two-day ticket, add catering and pay online. Your QR ticket arrives by e-mail.'),
+        img: '',
+      }),
+      b('ticketShop', {
+        groupNote: T2('Grupa powyżej 10 osób? Napisz na', 'A group of more than 10? E-mail'),
+        payNotice: T2('Podgląd: płatność online (BLIK, karta, Apple Pay, Google Pay) podłączymy w następnym etapie.', 'Preview: online payment (BLIK, card, Apple Pay, Google Pay) will be connected in the next stage.'),
+      }),
+      b('ad', { slot: 'tickets', format: 'wide' }),
+      b('faq', {
+        tint: false,
+        ...head(T2('Najczęstsze pytania', 'Frequently asked'), same('FAQ')),
+        noteKicker: T2('Wejściówki', 'Invitations'),
+        noteText: T2('Goście, media i partnerzy otrzymują bezpłatne wejściówki z indywidualnym kodem QR od organizatora.', 'Guests, media and partners receive free invitations with a personal QR code from the organiser.'),
+      }),
+    ],
+  ),
+
+  page(
+    'exhibitors',
+    4,
+    T2('wystawcy', 'exhibitors'),
+    T2('Katalog wystawców', 'Exhibitor directory'),
+    T2('Marki i firmy, które spotkasz na Beauty & Hair Expo Rzeszów 2028.', 'Brands and companies you will meet at Beauty & Hair Expo Rzeszów 2028.'),
+    'salon-modern',
+    [
+      b('pageHero', {
+        title: T2('Wystawcy', 'Exhibitors'),
+        eyebrow: T2('Katalog', 'Directory'),
+        lead: T2('Poznaj marki przed targami i zaplanuj, które stoiska odwiedzisz.', 'Meet the brands before the show and plan which stands to visit.'),
+        img: 'salon-modern',
+        btn: { label: EXH, link: 'page:exhibit', variant: 'light' },
+      }),
+      b('catalog', { slot: 'catalog-inline' }),
+    ],
+  ),
+
+  page(
+    'exhibit',
+    5,
+    T2('zostan-wystawca', 'exhibit'),
+    T2('Zostań wystawcą', 'Become an exhibitor'),
+    T2('Zaprezentuj markę na Beauty & Hair Expo Rzeszów 2028. Stoiska, branding, studio wideo i panele. Wyślij zgłoszenie.', 'Present your brand at Beauty & Hair Expo Rzeszów 2028. Stands, branding, video studio and panels. Apply now.'),
+    'event-booth',
+    [
+      b('exhibitForm', {
+        anchor: 'zgloszenie',
+        title: T2('Zostań wystawcą', 'Exhibit with us'),
+        lead: T2(
+          'Stoisk nie sprzedajemy online. Zostaw kontakt — przygotujemy ofertę dopasowaną do Twojej marki i odezwiemy się w ciągu kilku dni roboczych.',
+          'Stands are not sold online. Leave your details — we’ll prepare an offer for your brand and reply within a few working days.',
+        ),
+        img: 'event-booth',
+        submit: T2('Wyślij zgłoszenie', 'Send application'),
+        success: T2('Dziękujemy! Zgłoszenie dotarło. Odezwiemy się z ofertą.', 'Thank you! We’ve received your application and will be in touch.'),
+      }),
+      b('cards', {
+        style: 'offer',
+        tint: false,
+        ...head(T2('Co możesz zyskać', 'What you get'), T2('Oferta', 'Offer'), T2('Cennik i pakiety przekażemy po zgłoszeniu.', 'We’ll send prices and packages after you apply.')),
+        items: [
+          { title: T2('Stoisko', 'Stand'), text: T2('Powierzchnia od 6 do 100 m², zabudowa standardowa lub własna.', 'From 6 to 100 m², standard or custom build.') },
+          { title: T2('Branding', 'Branding'), text: T2('Druk plakatów, oklejenie stoiska, reklama na hali.', 'Poster printing, stand wrapping, in-hall advertising.') },
+          { title: T2('Kampania', 'Campaign'), text: T2('Promocja Twojej marki w social media i newsletterze targów.', 'Promotion of your brand on our social media and newsletter.') },
+          { title: T2('Studio wideo', 'Video studio'), text: T2('Wywiady, rolki i transmisje live nagrywane na miejscu.', 'Interviews, reels and live streams recorded on site.') },
+          { title: T2('Scena i panele', 'Stage & panels'), text: T2('Pokaz lub udział w panelu eksperckim na scenie głównej.', 'A show or an expert panel slot on the main stage.') },
+          { title: T2('Masterclass', 'Masterclass'), text: T2('Poprowadź warsztat dla małej grupy specjalistów.', 'Run a workshop for a small group of professionals.') },
+        ],
+      }),
+      b('buttons', { items: [{ label: T2('Zobacz, kto już wystawia →', 'See who’s exhibiting →'), link: 'page:exhibitors', variant: 'link' }] }),
+    ],
+  ),
+
+  page(
+    'partners',
+    6,
+    T2('partnerzy', 'partners'),
+    T2('Partnerzy i sponsorzy', 'Partners & sponsors'),
+    T2('Partnerzy, sponsorzy i patroni medialni Beauty & Hair Expo. Pakiety partnerskie i reklama.', 'Partners, sponsors and media partners of Beauty & Hair Expo. Partnership packages and advertising.'),
+    'event-networking',
+    [
+      b('pageHero', { title: T2('Partnerzy', 'Partners'), eyebrow: T2('Współpraca', 'Partnership'), lead: T2('Marki, które tworzą z nami pierwszą edycję.', 'Brands creating the first edition with us.'), img: 'event-networking' }),
+      b('partners', { compact: false, ...head(same(''), same('')) }),
+      b('cards', {
+        style: 'packs',
+        tint: true,
+        ...head(T2('Zostań partnerem lub reklamodawcą', 'Become a partner or advertiser'), T2('Pakiety', 'Packages')),
+        items: [
+          { title: T2('Partner strategiczny', 'Strategic partner'), text: T2('Logo w nazwie strefy, scena, pełna kampania i najlepsze miejsca reklamowe.', 'Zone naming, a stage slot, a full campaign and premium ad placements.') },
+          { title: T2('Partner złoty', 'Gold partner'), text: T2('Logo na stronie i na hali, baner w katalogu wystawców, posty w social media.', 'Logo on site and in the hall, directory banner, social posts.') },
+          { title: T2('Reklama online', 'Online advertising'), text: T2('Banery na stronie głównej, podstronach i w strefach — z raportem wyświetleń i kliknięć.', 'Banners on the home page, subpages and zones — with view and click reports.') },
+        ],
+      }),
+      b('form', {
+        kind: 'partner',
+        kicker: T2('Kontakt', 'Contact'),
+        title: T2('Porozmawiajmy o współpracy', 'Let’s talk partnership'),
+        text: same(''),
+        email: 'partnerzy',
+        btn: { label: same(''), link: '' },
+        submit: T2('Wyślij', 'Send'),
+        success: T2('Dziękujemy! Odezwiemy się z propozycją.', 'Thank you! We’ll get back to you with a proposal.'),
+      }),
+    ],
+  ),
+
+  page(
+    'media',
+    7,
+    same('media'),
+    T2('Dla mediów', 'Press'),
+    T2('Akredytacja prasowa i materiały dla mediów — Beauty & Hair Expo Rzeszów 2028.', 'Press accreditation and media kit — Beauty & Hair Expo Rzeszów 2028.'),
+    'event-mic',
+    [
+      b('pageHero', { title: same('Media'), eyebrow: T2('Prasa', 'Press'), lead: T2('Akredytacja, materiały prasowe i kontakt dla dziennikarzy.', 'Accreditation, press materials and contact for journalists.'), img: 'event-mic' }),
+      b('form', {
+        kind: 'media',
+        kicker: T2('Akredytacja', 'Accreditation'),
+        title: T2('Zgłoś się po akredytację', 'Apply for accreditation'),
+        text: T2('Po weryfikacji otrzymasz bezpłatną wejściówkę z kodem QR.', 'After verification you’ll receive a free QR pass.'),
+        email: 'media',
+        btn: { label: T2('Press kit (wkrótce)', 'Press kit (soon)'), link: '#', variant: 'outline' },
+        submit: T2('Wyślij zgłoszenie', 'Apply'),
+        success: T2('Dziękujemy! Potwierdzimy akredytację e-mailem.', 'Thank you! We’ll confirm your accreditation by e-mail.'),
+      }),
+    ],
+  ),
+
+  page(
+    'news',
+    8,
+    T2('aktualnosci', 'news'),
+    T2('Aktualności', 'News'),
+    T2('Nowości, zapowiedzi i artykuły od organizatorów Beauty & Hair Expo.', 'News, announcements and articles from the Beauty & Hair Expo team.'),
+    'news-wash',
+    [b('pageHero', { title: T2('Aktualności', 'News'), eyebrow: same('Blog'), lead: same(''), img: 'news-wash' }), b('news', { limit: 0 })],
+  ),
+
+  page(
+    'visit',
+    9,
+    T2('informacje', 'visit'),
+    T2('Informacje praktyczne', 'Plan your visit'),
+    T2('Jak dojechać do ZEN.COM Expo, godziny otwarcia, parking i noclegi — Beauty & Hair Expo 2028.', 'Getting to ZEN.COM Expo, opening hours, parking and hotels — Beauty & Hair Expo 2028.'),
+    'event-hall',
+    [
+      b('pageHero', { title: T2('Jak dojechać', 'Getting there'), eyebrow: same('ZEN.COM Expo'), lead: T2('Jasionka k. Rzeszowa', 'Jasionka near Rzeszów'), img: 'event-hall' }),
+      b('facts', {
+        items: [
+          { k: T2('Termin', 'Dates'), v: T2('19–20 lutego 2028, 10:00–18:00', '19–20 February 2028, 10:00–18:00') },
+          { k: T2('Miejsce', 'Venue'), v: same('ZEN.COM Expo, Jasionka 953, 36-002 Jasionka') },
+          { k: T2('Samolotem', 'By plane'), v: T2('Lotnisko Rzeszów-Jasionka jest tuż obok hali.', 'Rzeszów-Jasionka Airport is right next to the venue.') },
+          { k: T2('Samochodem', 'By car'), v: T2('Dojazd autostradą A4 i drogą S19. Parking przy obiekcie.', 'Via the A4 motorway and the S19 road. Parking on site.') },
+          { k: T2('Noclegi', 'Hotels'), v: T2('Lista hoteli partnerskich z rabatem pojawi się wkrótce.', 'Partner hotels with discounts coming soon.') },
+          { k: T2('Wejście', 'Entry'), v: T2('Pokaż kod QR z e-maila. Ponowne wejście zgodnie z rodzajem biletu.', 'Show the QR code from your e-mail. Re-entry depends on ticket type.') },
+        ],
+      }),
+      b('map', { src: 'https://www.openstreetmap.org/export/embed.html?bbox=21.98%2C50.09%2C22.07%2C50.13&layer=mapnik&marker=50.1115%2C22.0225' }),
+    ],
+  ),
+
+  page(
+    'contact',
+    10,
+    T2('kontakt', 'contact'),
+    T2('Kontakt', 'Contact'),
+    T2('Skontaktuj się z organizatorami Beauty & Hair Expo Rzeszów 2028.', 'Get in touch with the Beauty & Hair Expo Rzeszów 2028 team.'),
+    'salon-pink',
+    [
+      b('pageHero', { title: T2('Kontakt', 'Contact'), eyebrow: T2('Napisz do nas', 'Write to us'), lead: same(''), img: 'salon-pink' }),
+      b('form', {
+        kind: 'contact',
+        kicker: same(''),
+        title: same(''),
+        text: same(''),
+        email: 'all',
+        btn: { label: same(''), link: '' },
+        submit: T2('Wyślij', 'Send'),
+        success: T2('Dziękujemy! Wiadomość trafiła do właściwej osoby.', 'Thank you! Your message has reached the right person.'),
+      }),
+    ],
+  ),
+
+  page(
+    'terms',
+    11,
+    T2('regulamin', 'terms'),
+    T2('Regulamin sprzedaży biletów', 'Ticket sales terms'),
+    T2('Regulamin sprzedaży biletów', 'Ticket sales terms'),
+    undefined,
+    [b('text', { title: T2('Regulamin sprzedaży biletów', 'Ticket sales terms'), body: T2('Dokument w przygotowaniu. Ostateczną treść przygotuje organizator wraz z prawnikiem.', 'Document in preparation. The final text will be provided by the organiser and their lawyer.') })],
+    true,
+  ),
+  page(
+    'privacy',
+    12,
+    T2('polityka-prywatnosci', 'privacy'),
+    T2('Polityka prywatności', 'Privacy policy'),
+    T2('Polityka prywatności', 'Privacy policy'),
+    undefined,
+    [b('text', { title: T2('Polityka prywatności', 'Privacy policy'), body: T2('Dokument w przygotowaniu. Ostateczną treść przygotuje organizator wraz z prawnikiem.', 'Document in preparation. The final text will be provided by the organiser and their lawyer.') })],
+    true,
+  ),
+]
+
+const nav = (label: T, link: string) => ({ label, link })
+
+export const DEFAULT: SiteData = {
+  event: {
+    brand: 'Beauty & Hair Expo',
+    edition: 'Rzeszów 2028',
+    startsAt: '2028-02-19T10:00:00+01:00',
+    dates: T2('19–20 lutego 2028', '19–20 February 2028'),
+    datesShort: '19–20.02.2028',
+    hours: '10:00–18:00',
+    venue: 'ZEN.COM Expo',
+    city: T2('Jasionka k. Rzeszowa', 'Jasionka near Rzeszów'),
+    address: 'Jasionka 953, 36-002 Jasionka',
+    organizer: 'Fundacja Wielkie Serce dla Dzieci',
+    emails: {
+      kontakt: 'kontakt@targibeautyhair.pl',
+      wystawcy: 'wystawcy@targibeautyhair.pl',
+      bilety: 'bilety@targibeautyhair.pl',
+      partnerzy: 'partnerzy@targibeautyhair.pl',
+      media: 'media@targibeautyhair.pl',
+      vip: 'vip@targibeautyhair.pl',
+    },
+  },
+  stats: [
+    { value: '120+', label: T2('wystawców', 'exhibitors') },
+    { value: '40', label: T2('ekspertów i prelegentów', 'experts & speakers') },
+    { value: '25', label: T2('masterclass i warsztatów', 'masterclasses & workshops') },
+    { value: '2', label: T2('dni inspiracji', 'days of inspiration') },
+  ],
+  tickets: [
+    {
+      id: 'day',
+      name: T2('Bilet jednodniowy', 'One-day ticket'),
+      price: 79,
+      note: T2('sobota lub niedziela', 'Saturday or Sunday'),
+      days: 1,
+      active: true,
+      perks: [
+        T2('Wstęp na halę wystawców', 'Access to the exhibition hall'),
+        T2('Pokazy na scenie głównej', 'Main stage shows'),
+        T2('Ponowne wejście tego samego dnia', 'Same-day re-entry'),
+        T2('Catering do wyboru (+59 zł)', 'Optional catering (+PLN 59)'),
+      ],
+    },
+    {
+      id: 'weekend',
+      name: T2('Bilet dwudniowy', 'Two-day ticket'),
+      price: 129,
+      note: T2('oba dni targów', 'both days'),
+      days: 2,
+      active: true,
+      featured: true,
+      perks: [
+        T2('Wstęp w sobotę i niedzielę', 'Entry on Saturday and Sunday'),
+        T2('Pokazy i panele dyskusyjne', 'Shows and panel talks'),
+        T2('Ponowne wejście w oba dni', 'Re-entry on both days'),
+        T2('Catering do wyboru (+59 zł / dzień)', 'Optional catering (+PLN 59 / day)'),
+      ],
+    },
+    {
+      id: 'vip',
+      name: T2('Bilet VIP', 'VIP ticket'),
+      price: 349,
+      note: T2('oba dni + strefa VIP', 'both days + VIP lounge'),
+      days: 2,
+      active: true,
+      cateringIncluded: true,
+      perks: [
+        T2('Catering w cenie, oba dni', 'Catering included, both days'),
+        T2('Strefa VIP z poczęstunkiem', 'VIP lounge with refreshments'),
+        T2('Miejsca w pierwszych rzędach', 'Front-row seats'),
+        T2('Pakiet upominków od partnerów', 'Partner gift bag'),
+        T2('Osobne, szybkie wejście', 'Fast-track entrance'),
+      ],
+    },
+  ],
+  ticketDays: [
+    { id: 'sat', label: T2('Sobota', 'Saturday'), date: '19.02.2028' },
+    { id: 'sun', label: T2('Niedziela', 'Sunday'), date: '20.02.2028' },
+  ],
+  catering: { pricePerDay: 59, name: T2('Catering', 'Catering'), desc: T2('Lunch, kawa i przekąski w strefie gastronomicznej', 'Lunch, coffee and snacks in the food court') },
+  promoCodes: [],
+  faces: [
+    { name: 'Anna Wiśniewska', role: T2('Ambasadorka · fryzjerstwo', 'Ambassador · hair'), img: 'expert-2' },
+    { name: 'Julia Nowak', role: T2('Ambasadorka · make-up', 'Ambassador · make-up'), img: 'expert-6' },
+    { name: 'Karolina Mazur', role: T2('Ambasadorka · trychologia', 'Ambassador · trichology'), img: 'expert-1' },
+    { name: 'Natalia Lewandowska', role: T2('Ambasadorka · nails', 'Ambassador · nails'), img: 'expert-5' },
+  ],
+  zones: [
+    { slug: same('hair'), short: 'hair', name: T2('Strefa Hair', 'Hair Zone'), img: 'zone-hair', partner: 'Maison Coiffure', lead: T2('Koloryzacja, strzyżenia i stylizacje na żywo. Najnowsze techniki pokazywane przez stylistów z Polski i Europy.', 'Live colouring, cutting and styling. The newest techniques shown by stylists from Poland and Europe.') },
+    { slug: same('make-up'), short: 'make-up', name: T2('Strefa Make-up', 'Make-up Zone'), img: 'portrait-bun', partner: 'Atelier Lumière', lead: T2('Makijaż dzienny, ślubny i sceniczny. Testy kosmetyków i konsultacje z wizażystami.', 'Day, bridal and stage make-up. Product testing and consultations with make-up artists.') },
+    { slug: same('nails'), short: 'nails', name: T2('Strefa Nails', 'Nails Zone'), img: 'zone-nails', partner: 'Nude Studio', lead: T2('Stylizacja paznokci, zdobienia i nowości produktowe. Mistrzostwa i pokazy na żywo.', 'Nail styling, nail art and new products. Live championships and demos.') },
+    { slug: T2('kosmetologia', 'cosmetology'), short: 'skin', name: T2('Strefa Kosmetologii', 'Cosmetology Zone'), img: 'zone-cosmetology', partner: 'Derma Lab', lead: T2('Zabiegi na twarz i ciało, aparatura i pielęgnacja. Wykłady lekarzy i kosmetologów.', 'Face and body treatments, devices and skincare. Talks by doctors and cosmetologists.') },
+    { slug: same('barber'), short: 'barber', name: T2('Strefa Barber', 'Barber Zone'), img: 'zone-barber', partner: 'Gentlemen’s Club', lead: T2('Strzyżenie męskie, broda i golenie brzytwą. Pokazy najlepszych barberów w regionie.', 'Men’s cuts, beards and razor shaves. Shows by the region’s best barbers.') },
+  ],
+  masterclasses: [
+    { id: 'balayage', title: T2('Balayage od podstaw do efektu wow', 'Balayage from basics to wow'), host: 'Anna Wiśniewska', day: T2('Sobota', 'Saturday'), time: '11:00–13:00', price: 249, seats: 30, left: 12, img: 'hair-blowdry' },
+    { id: 'bridal', title: T2('Makijaż ślubny, który przetrwa cały dzień', 'Bridal make-up that lasts all day'), host: 'Julia Nowak', day: T2('Sobota', 'Saturday'), time: '14:00–16:00', price: 199, seats: 25, left: 4, img: 'hero' },
+    { id: 'salon', title: T2('Salon, który sprzedaje. Marketing w beauty', 'A salon that sells. Marketing in beauty'), host: 'Marek Zieliński', day: T2('Niedziela', 'Sunday'), time: '10:30–12:30', price: 179, seats: 60, left: 0, img: 'mc-seminar' },
+  ],
+  experts: [
+    { name: 'Anna Wiśniewska', role: T2('Stylistka fryzur, koloryzacja', 'Hair stylist, colour'), img: 'expert-2' },
+    { name: 'Julia Nowak', role: T2('Wizażystka', 'Make-up artist'), img: 'expert-6' },
+    { name: 'Karolina Mazur', role: T2('Trycholożka', 'Trichologist'), img: 'expert-1' },
+    { name: 'Marek Zieliński', role: T2('Ekspert biznesu beauty', 'Beauty business expert'), img: 'expert-4' },
+    { name: 'Ewa Kamińska', role: T2('Kosmetolożka', 'Cosmetologist'), img: 'expert-3' },
+    { name: 'Natalia Lewandowska', role: T2('Stylistka paznokci', 'Nail artist'), img: 'expert-5' },
+  ],
+  program: [
+    {
+      day: T2('Sobota', 'Saturday'),
+      date: '19.02.2028',
+      items: [
+        { time: '10:00', title: T2('Otwarcie targów', 'Opening'), stage: T2('Scena główna', 'Main stage') },
+        { time: '10:30', title: T2('Trendy koloryzacji 2028', 'Colour trends 2028'), stage: T2('Scena główna', 'Main stage'), host: 'Anna Wiśniewska', zone: 'hair' },
+        { time: '11:00', title: T2('Masterclass: Balayage', 'Masterclass: Balayage'), stage: T2('Sala A', 'Room A'), host: 'Anna Wiśniewska', zone: 'hair' },
+        { time: '12:30', title: T2('Skóra zimą — panel ekspertów', 'Skin in winter — expert panel'), stage: T2('Scena główna', 'Main stage'), host: 'Ewa Kamińska', zone: 'skin' },
+        { time: '14:00', title: T2('Masterclass: Makijaż ślubny', 'Masterclass: Bridal make-up'), stage: T2('Sala B', 'Room B'), host: 'Julia Nowak', zone: 'make-up' },
+        { time: '16:00', title: T2('Pokaz fryzur wieczorowych', 'Evening hair show'), stage: T2('Scena główna', 'Main stage'), zone: 'hair' },
+      ],
+    },
+    {
+      day: T2('Niedziela', 'Sunday'),
+      date: '20.02.2028',
+      items: [
+        { time: '10:00', title: T2('Śniadanie biznesowe VIP', 'VIP business breakfast'), stage: T2('Strefa VIP', 'VIP lounge') },
+        { time: '10:30', title: T2('Masterclass: Marketing w beauty', 'Masterclass: Beauty marketing'), stage: T2('Sala A', 'Room A'), host: 'Marek Zieliński' },
+        { time: '12:00', title: T2('Mistrzostwa stylizacji paznokci', 'Nail art championship'), stage: T2('Scena Nails', 'Nails stage'), host: 'Natalia Lewandowska', zone: 'nails' },
+        { time: '13:30', title: T2('Barber battle', 'Barber battle'), stage: T2('Scena główna', 'Main stage'), zone: 'barber' },
+        { time: '15:00', title: T2('Zdrowe włosy od skóry głowy', 'Healthy hair starts at the scalp'), stage: T2('Scena główna', 'Main stage'), host: 'Karolina Mazur', zone: 'hair' },
+        { time: '17:00', title: T2('Zakończenie i losowanie nagród', 'Closing and prize draw'), stage: T2('Scena główna', 'Main stage') },
+      ],
+    },
+  ],
+  exhibitors: [
+    { name: 'Maison Coiffure', category: T2('Kosmetyki do włosów', 'Hair care'), stand: 'A12', zone: 'hair' },
+    { name: 'Atelier Lumière', category: T2('Kosmetyki kolorowe', 'Colour cosmetics'), stand: 'B04', zone: 'make-up' },
+    { name: 'Nude Studio', category: T2('Stylizacja paznokci', 'Nail styling'), stand: 'C08', zone: 'nails' },
+    { name: 'Derma Lab', category: T2('Aparatura kosmetyczna', 'Beauty devices'), stand: 'D01', zone: 'skin' },
+    { name: 'Gentlemen’s Club', category: same('Barber'), stand: 'E03', zone: 'barber' },
+    { name: 'Silk & Stone', category: T2('Pielęgnacja naturalna', 'Natural skincare'), stand: 'D07', zone: 'skin' },
+    { name: 'Velvet Brush', category: T2('Pędzle i akcesoria', 'Brushes & tools'), stand: 'B11', zone: 'make-up' },
+    { name: 'Salon Pro Furniture', category: T2('Wyposażenie salonów', 'Salon furniture'), stand: 'A02', zone: 'hair' },
+    { name: 'Aurora Color', category: T2('Farby do włosów', 'Hair colour'), stand: 'A15', zone: 'hair' },
+    { name: 'Lash Society', category: T2('Rzęsy i brwi', 'Lashes & brows'), stand: 'B09', zone: 'make-up' },
+    { name: 'Pure Nails', category: T2('Lakiery hybrydowe', 'Gel polish'), stand: 'C02', zone: 'nails' },
+    { name: 'SalonFlow', category: T2('Oprogramowanie dla salonów', 'Salon software'), stand: 'F01', zone: 'hair' },
+  ],
+  partners: [
+    { tier: T2('Partner strategiczny', 'Strategic partner'), items: [{ name: 'Maison Coiffure' }] },
+    { tier: T2('Partnerzy złoci', 'Gold partners'), items: [{ name: 'Atelier Lumière' }, { name: 'Derma Lab' }, { name: 'Aurora Color' }] },
+    { tier: T2('Partnerzy', 'Partners'), items: [{ name: 'Nude Studio' }, { name: 'Silk & Stone' }, { name: 'Velvet Brush' }, { name: 'Lash Society' }, { name: 'Pure Nails' }] },
+    { tier: T2('Patroni medialni', 'Media partners'), items: [{ name: 'Beauty Forum' }, { name: 'Hair Mag' }, { name: 'Salon Today' }] },
+  ],
+  posts: [
+    {
+      slug: 'ruszamy-z-pierwsza-edycja',
+      title: T2('Ruszamy z pierwszą edycją Beauty & Hair Expo', 'The first Beauty & Hair Expo is coming'),
+      date: '2026-11-05',
+      img: 'event-stage',
+      excerpt: T2('W lutym 2028 ZEN.COM Expo zamieni się w największe spotkanie branży beauty na Podkarpaciu.', 'In February 2028 ZEN.COM Expo becomes the biggest beauty industry meeting in south-eastern Poland.'),
+      body: T2(
+        'Beauty & Hair Expo to dwa dni pokazów, warsztatów i spotkań dla stylistów, kosmetologów, wizażystów, barberów i właścicieli salonów.\n\nNa hali spotkasz producentów kosmetyków, dystrybutorów sprzętu i ekspertów, którzy na żywo pokażą najnowsze techniki.',
+        'Beauty & Hair Expo is two days of shows, workshops and meetings for stylists, cosmetologists, make-up artists, barbers and salon owners.\n\nIn the hall you will meet cosmetics brands, equipment distributors and experts showing the newest techniques live.',
+      ),
+    },
+    {
+      slug: 'masterclass-zapisy',
+      title: T2('Masterclass: jak wybrać warsztat dla siebie', 'Masterclass: how to choose the right workshop'),
+      date: '2026-11-04',
+      img: 'news-wash',
+      excerpt: T2('Liczba miejsc na warsztatach jest ograniczona. Podpowiadamy, na co zwrócić uwagę.', 'Workshop seats are limited. Here is what to look for.'),
+      body: T2('Każdy masterclass prowadzi praktyk z wieloletnim doświadczeniem. Grupy są małe, żeby każdy mógł zadać pytanie.', 'Every masterclass is led by an experienced practitioner. Groups are small so everyone can ask questions.'),
+    },
+    {
+      slug: 'trendy-pielegnacji',
+      title: T2('5 trendów w pielęgnacji, o których usłyszysz na targach', '5 skincare trends you will hear about at the expo'),
+      date: '2026-11-02',
+      img: 'news-facial',
+      excerpt: T2('Od pielęgnacji skóry głowy po zabiegi bez igieł — przegląd tematów scen eksperckich.', 'From scalp care to needle-free treatments — an overview of the expert stage topics.'),
+      body: T2('Pielęgnacja skóry głowy, minimalizm w rutynie i nowoczesna aparatura — to tematy, które zdominują panele eksperckie.', 'Scalp care, minimal routines and modern devices are the topics set to dominate the expert panels.'),
+    },
+  ],
+  faq: [
+    { q: T2('Jak otrzymam bilet?', 'How will I receive my ticket?'), a: T2('Po płatności bilet z indywidualnym kodem QR przyjdzie na Twój e-mail. Wystarczy pokazać go na telefonie przy wejściu.', 'After payment your ticket with a unique QR code is sent by e-mail. Just show it on your phone at the entrance.') },
+    { q: T2('Czy mogę wyjść i wrócić?', 'Can I leave and come back?'), a: T2('Tak, ponowne wejście jest możliwe w dniach, na które ważny jest Twój bilet.', 'Yes, re-entry is possible on the days your ticket is valid for.') },
+    { q: T2('Czy dostanę fakturę?', 'Can I get an invoice?'), a: T2('Tak. Dane do faktury podasz podczas zamówienia — dokument przyjdzie automatycznie.', 'Yes. Enter your invoice details during checkout — the document is sent automatically.') },
+    { q: T2('Czy można zwrócić bilet?', 'Can I return a ticket?'), a: T2('Bilety na wydarzenie w określonym terminie nie podlegają zwrotowi. Szczegóły w regulaminie.', 'Tickets for a dated event are non-refundable. See the terms for details.') },
+  ],
+  banners: [
+    { id: 'maison-bar', brand: 'Maison Coiffure', format: 'bar', kicker: T2('Partner główny', 'Main partner'), claim: T2('Oficjalny partner strefy Hair', 'Official Hair Zone partner'), cta: same(''), url: '', slots: ['home-main-partner'], active: true, weight: 1 },
+    { id: 'maison-gold', brand: 'Maison Coiffure', format: 'banner', style: 'gold', kicker: T2('Partner strategiczny', 'Strategic partner'), claim: T2('Kolekcja Lumière 2028 — premiera na scenie głównej', 'Lumière 2028 collection — premiere on the main stage'), cta: T2('Zobacz pokaz', 'See the show'), url: '', slots: ['home-b1'], active: true, weight: 1 },
+    { id: 'derma-dark', brand: 'Derma Lab', format: 'banner', style: 'dark', kicker: T2('Oferta targowa', 'Expo offer'), claim: T2('−20% na aparaturę tylko w dniach targów', '−20% on devices during the expo only'), cta: T2('Stoisko D01', 'Stand D01'), url: '', slots: ['home-b2'], active: true, weight: 1 },
+    { id: 'nude-photo', brand: 'Nude Studio', format: 'banner', style: 'photo', img: 'zone-nails', kicker: T2('Partner strefy Nails', 'Nails Zone partner'), claim: T2('Mistrzostwa stylizacji paznokci — zapisz się', 'Nail art championship — sign up'), cta: T2('Zapisy', 'Sign up'), url: '', slots: ['home-b3'], active: true, weight: 1 },
+    { id: 'atelier-wide', brand: 'Atelier Lumière', format: 'wide', img: 'zone-hair', kicker: same(''), claim: T2('Nowa kolekcja na targach — stoisko B04', 'New collection at the expo — stand B04'), cta: T2('Sprawdź', 'Discover'), url: '', slots: ['home-wide', 'program', 'article', 'zone'], active: true, weight: 1 },
+    { id: 'atelier-wide-2', brand: 'Atelier Lumière', format: 'wide', img: 'zone-cosmetology', kicker: same(''), claim: T2('Nowa kolekcja na targach — stoisko B04', 'New collection at the expo — stand B04'), cta: T2('Sprawdź', 'Discover'), url: '', slots: ['tickets'], active: true, weight: 1 },
+    { id: 'atelier-tile', brand: 'Atelier Lumière', format: 'tile', img: 'nails-dark', kicker: same(''), claim: T2('Nowa kolekcja na targach — stoisko B04', 'New collection at the expo — stand B04'), cta: T2('Sprawdź', 'Discover'), url: '', slots: ['home-feed', 'catalog-inline'], active: true, weight: 1 },
+  ],
+  nav: {
+    left: [nav(T2('Program', 'Programme'), 'page:program'), nav(T2('Bilety', 'Tickets'), 'page:tickets'), nav(T2('Wystawcy', 'Exhibitors'), 'page:exhibitors'), nav(T2('O targach', 'About'), 'page:about')],
+    right: [nav(T2('Partnerzy', 'Partners'), 'page:partners'), nav(T2('Aktualności', 'News'), 'page:news'), nav(T2('Kontakt', 'Contact'), 'page:contact')],
+    footer: [
+      { title: T2('Targi', 'Expo'), links: [nav(T2('O targach', 'About'), 'page:about'), nav(T2('Program', 'Programme'), 'page:program'), nav(T2('Bilety', 'Tickets'), 'page:tickets'), nav(T2('Dojazd', 'Getting there'), 'page:visit')] },
+      { title: T2('Współpraca', 'Work with us'), links: [nav(EXH, 'page:exhibit'), nav(T2('Katalog wystawców', 'Exhibitors'), 'page:exhibitors'), nav(T2('Partnerzy i reklama', 'Partners & ads'), 'page:partners'), nav(T2('Media', 'Press'), 'page:media')] },
+      { title: T2('Więcej', 'More'), links: [nav(T2('Aktualności', 'News'), 'page:news'), nav(T2('Kontakt', 'Contact'), 'page:contact'), nav(T2('Regulamin', 'Terms'), 'page:terms'), nav(T2('Prywatność', 'Privacy'), 'page:privacy')] },
+    ],
+  },
+  settings: {
+    logoText: 'Beauty & Hair',
+    logoSub: 'Expo · Rzeszów 2028',
+    logoImg: '',
+    ogImage: 'mc-team',
+    social: [
+      { name: 'Instagram', url: 'https://instagram.com/' },
+      { name: 'Facebook', url: 'https://facebook.com/' },
+      { name: 'TikTok', url: 'https://tiktok.com/' },
+    ],
+    footerNote: T2('Wersja robocza — teksty, ceny i zdjęcia są przykładowe.', 'Draft — texts, prices and photos are placeholders.'),
+    partnerStrip: true,
+    tracking: true,
+  },
+  pages,
+  edition: null,
+}

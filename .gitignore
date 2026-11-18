@@ -12,3 +12,6 @@ assets/photos/*.jpg
 
 # podglądy QC (lokalnie)
 .qc
+.old
+src/content/published.json
+public/m

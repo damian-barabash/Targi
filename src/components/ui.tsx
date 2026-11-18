@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom'
 import { Head } from 'vite-react-ssg'
 import type { Locale } from '../i18n'
 import { imgSet, imgSrc } from '../lib/img'
-import { EVENT } from '../content/site'
+import { link } from '../lib/link'
+import { trackAd } from '../lib/track'
+import { RT, S } from '../content/site'
+import type { Banner } from '../content/types'
+import { E, Im, useEdit } from '../blocks/edit'
 
 export const LocaleCtx = createContext<Locale>('pl')
 export const useLocale = () => useContext(LocaleCtx)
@@ -33,7 +37,7 @@ export function Btn({ to, children, variant = 'dark', arrow = false, className =
       {arrow && <Arrow />}
     </>
   )
-  if (/^(https?:|mailto:|#)/.test(to)) return <a className={cls} href={to}>{inner}</a>
+  if (/^(https?:|mailto:|tel:|#)/.test(to) || !to) return <a className={cls} href={to || '#'}>{inner}</a>
   return <Link className={cls} to={to}>{inner}</Link>
 }
 
@@ -103,7 +107,7 @@ export function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }:
 }
 
 export function Countdown({ labels }: { labels: { days: string; hours: string; minutes: string } }) {
-  const target = new Date(EVENT.startsAt).getTime()
+  const target = new Date(S.event.startsAt).getTime()
   const [now, setNow] = useState<number | null>(null)
   useEffect(() => {
     setNow(Date.now())
@@ -133,9 +137,10 @@ export function Eyebrow({ children }: { children: ReactNode; light?: boolean }) 
   return <p className="kicker">{children}</p>
 }
 
-export function Seo({ title, description, image = 'mc-team' }: { title: string; description: string; image?: string }) {
+export function Seo({ title, description, image }: { title: string; description: string; image?: string }) {
   const l = useLocale()
-  const full = title.includes(EVENT.brand) ? title : `${title} · ${EVENT.brand}`
+  const full = title.includes(S.event.brand) ? title : `${title} · ${S.event.brand}`
+  image ||= S.settings.ogImage || 'mc-team'
   return (
     <Head>
       <html lang={l} />
@@ -151,75 +156,130 @@ export function Seo({ title, description, image = 'mc-team' }: { title: string; 
   )
 }
 
-/** Miejsce reklamowe. Baner, okres emisji i statystyki przyjdą z panelu.
- *  bar = pasek partnera głównego, wide = baner 1200×300, tile = kafel 600×600. */
-export function AdSlot({ id, label, variant = 'wide', img = 'salon-pink' }: { id: string; label: string; variant?: 'wide' | 'tile' | 'bar'; img?: string }) {
-  const l = useLocale()
-  const pl = l === 'pl'
-  if (variant === 'bar')
-    return (
-      <aside className="adbar" data-ad-slot={id} aria-label={label}>
-        <span className="adbar__k">{pl ? 'Partner główny' : 'Main partner'}</span>
-        <span className="adbar__logo">Maison Coiffure</span>
-        <span className="adbar__txt">{pl ? 'Oficjalny partner strefy Hair' : 'Official Hair Zone partner'}</span>
-      </aside>
-    )
-  return (
-    <aside className={`ad ad--${variant}`} data-ad-slot={id} aria-label={label}>
-      <div className="ad__media">
-        <Img name={img} sizes={variant === 'wide' ? '(max-width: 800px) 100vw, 50vw' : '(max-width: 800px) 50vw, 25vw'} />
-      </div>
-      <div className="ad__body">
-        <span className="ad__label">
-          {label} · {variant === 'wide' ? '1200 × 300' : '600 × 600'}
-        </span>
-        <span className="ad__brand">Atelier Lumière</span>
-        <span className="ad__claim">{pl ? 'Nowa kolekcja na targach — stoisko B04' : 'New collection at the expo — stand B04'}</span>
-        <span className="ad__cta">{pl ? 'Sprawdź →' : 'Discover →'}</span>
-      </div>
-    </aside>
+/** Banery pasujące do miejsca reklamowego i terminu emisji. */
+export function bannersFor(slot: string, formats: Banner['format'][], now = Date.now()): Banner[] {
+  const day = new Date(now).toISOString().slice(0, 10)
+  return (S.banners ?? []).filter(
+    (b) => b.active !== false && formats.includes(b.format) && b.slots?.includes(slot) && (!b.from || b.from <= day) && (!b.to || b.to >= day),
   )
 }
 
-/** Przykładowe banery partnerów (kreacje robocze). Docelowo: grafika z panelu, okres emisji, licznik wyświetleń i kliknięć. */
-const BANNERS = {
-  gold: {
-    brand: 'Maison Coiffure',
-    claim: { pl: 'Kolekcja Lumière 2028 — premiera na scenie głównej', en: 'Lumière 2028 collection — premiere on the main stage' },
-    cta: { pl: 'Zobacz pokaz', en: 'See the show' },
-    kicker: { pl: 'Partner strategiczny', en: 'Strategic partner' },
-  },
-  dark: {
-    brand: 'Derma Lab',
-    claim: { pl: '−20% na aparaturę tylko w dniach targów', en: '−20% on devices during the expo only' },
-    cta: { pl: 'Stoisko D01', en: 'Stand D01' },
-    kicker: { pl: 'Oferta targowa', en: 'Expo offer' },
-  },
-  photo: {
-    brand: 'Nude Studio',
-    claim: { pl: 'Mistrzostwa stylizacji paznokci — zapisz się', en: 'Nail art championship — sign up' },
-    cta: { pl: 'Zapisy', en: 'Sign up' },
-    kicker: { pl: 'Partner strefy Nails', en: 'Nails Zone partner' },
-  },
-} as const
+/** Wybór kreacji: w HTML-u pierwsza pasująca, w przeglądarce losowa wg wagi (rotacja) + licznik wyświetleń. */
+function useBanner(slot: string, formats: Banner['format'][]) {
+  const ed = useEdit()
+  const [id, setId] = useState<string | undefined>(() => bannersFor(slot, formats)[0]?.id)
+  const ref = useRef<HTMLElement>(null)
+  const list = bannersFor(slot, formats)
+  const banner = list.find((b) => b.id === id) ?? list[0]
 
-export function Banner({ id, variant, wide = false }: { id: string; variant: keyof typeof BANNERS; wide?: boolean }) {
+  useEffect(() => {
+    if (RT.preview) return
+    const all = bannersFor(slot, formats)
+    if (all.length < 2) return setId(all[0]?.id)
+    let r = Math.random() * all.reduce((s, b) => s + (b.weight || 1), 0)
+    setId((all.find((b) => (r -= b.weight || 1) < 0) ?? all[0]).id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slot])
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !banner || ed || !('IntersectionObserver' in window)) return
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          trackAd(banner.id, slot, 'i')
+          io.disconnect()
+        }
+      },
+      { threshold: 0.5 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [banner?.id, slot, ed])
+
+  const idx = banner ? S.banners.indexOf(banner) : -1
+  return { banner, ref, at: `banners.${idx}`, ed }
+}
+
+function AdLink({ banner, slot, className, children, innerRef }: { banner: Banner; slot: string; className: string; children: ReactNode; innerRef: React.Ref<any> }) {
   const l = useLocale()
-  const b = BANNERS[variant]
+  const url = link(l, banner.url)
+  const common = { className, 'data-ad-slot': slot, ref: innerRef }
+  if (!url) return <aside {...common}>{children}</aside>
   return (
-    <a className={`bnr bnr--${variant} ${wide ? 'bnr--wide' : ''}`} href="#" onClick={(e) => e.preventDefault()} data-ad-slot={id}>
-      {variant === 'photo' && (
+    <a {...common} href={url} target={/^https?:/.test(url) ? '_blank' : undefined} rel="sponsored noopener" onClick={() => trackAd(banner.id, slot, 'c')}>
+      {children}
+    </a>
+  )
+}
+
+function EmptySlot({ slot }: { slot: string }) {
+  return (
+    <div className="e-empty" data-ad-slot={slot}>
+      Miejsce reklamowe „{slot}” — brak aktywnego banera
+    </div>
+  )
+}
+
+/** Miejsce reklamowe. bar = pasek partnera głównego, wide = baner 1200×300, tile = kafel 600×600. */
+export function AdSlot({ slot, format = 'wide' }: { slot: string; format?: 'wide' | 'tile' | 'bar' }) {
+  const l = useLocale()
+  const { banner: b, ref, at, ed } = useBanner(slot, [format])
+  if (!b) return ed ? <EmptySlot slot={slot} /> : null
+  const label = l === 'pl' ? 'Reklama' : 'Advertisement'
+  if (format === 'bar')
+    return (
+      <AdLink banner={b} slot={slot} className="adbar" innerRef={ref}>
+        <E at={`${at}.kicker`} className="adbar__k" />
+        <E at={`${at}.brand`} className="adbar__logo" />
+        <E at={`${at}.claim`} className="adbar__txt" />
+      </AdLink>
+    )
+  return (
+    <AdLink banner={b} slot={slot} className={`ad ad--${format}`} innerRef={ref}>
+      <div className="ad__media">
+        <Im at={`${at}.img`} sizes={format === 'wide' ? '(max-width: 800px) 100vw, 50vw' : '(max-width: 800px) 50vw, 25vw'} />
+      </div>
+      <div className="ad__body">
+        <span className="ad__label">
+          {label} · {format === 'wide' ? '1200 × 300' : '600 × 600'}
+        </span>
+        <E at={`${at}.brand`} className="ad__brand" />
+        <E at={`${at}.claim`} className="ad__claim" />
+        {(b.cta?.[l] || ed) && (
+          <span className="ad__cta">
+            <E at={`${at}.cta`} /> →
+          </span>
+        )}
+      </div>
+    </AdLink>
+  )
+}
+
+/** Baner partnera z tłem: złoty, ciemny albo ze zdjęciem. */
+export function BannerSlot({ slot, wide = false }: { slot: string; wide?: boolean }) {
+  const l = useLocale()
+  const { banner: b, ref, at, ed } = useBanner(slot, ['banner'])
+  if (!b) return ed ? <EmptySlot slot={slot} /> : null
+  const style = b.style ?? 'gold'
+  return (
+    <AdLink banner={b} slot={slot} className={`bnr bnr--${style} ${wide ? 'bnr--wide' : ''}`} innerRef={ref}>
+      {style === 'photo' && (
         <span className="bnr__bg">
-          <Img name="zone-nails" sizes="(max-width: 800px) 100vw, 50vw" />
+          <Im at={`${at}.img`} sizes="(max-width: 800px) 100vw, 50vw" />
         </span>
       )}
       <span className="bnr__label">
         {l === 'pl' ? 'Reklama' : 'Ad'} · {wide ? '1440 × 360' : '720 × 360'}
       </span>
-      <span className="bnr__kicker">{b.kicker[l]}</span>
-      <span className="bnr__brand">{b.brand}</span>
-      <span className="bnr__claim">{b.claim[l]}</span>
-      <span className="bnr__cta">{b.cta[l]} →</span>
-    </a>
+      <E at={`${at}.kicker`} className="bnr__kicker" />
+      <E at={`${at}.brand`} className="bnr__brand" />
+      <E at={`${at}.claim`} className="bnr__claim" />
+      {(b.cta?.[l] || ed) && (
+        <span className="bnr__cta">
+          <E at={`${at}.cta`} /> →
+        </span>
+      )}
+    </AdLink>
   )
 }

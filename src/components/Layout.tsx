@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useMatches } from 'react-router-dom'
-import { href, t, ui, type Locale } from '../i18n'
-import { EVENT, PARTNERS } from '../content/site'
+import { t, ui, type Locale } from '../i18n'
+import { S } from '../content/site'
+import { link, pageHref } from '../lib/link'
+import { trackVisit } from '../lib/track'
 import { LocaleCtx } from './ui'
 import Motion from './Motion'
 
 export type RouteHandle = { alt: Record<Locale, string>; plain?: boolean }
 
 export default function Layout({ locale }: { locale: Locale }) {
+  const { pathname } = useLocation()
+  useEffect(() => trackVisit(pathname, locale), [pathname, locale])
   return (
     <LocaleCtx.Provider value={locale}>
       <Header locale={locale} />
       <main id="main">
         <Outlet />
       </main>
-      <PartnerStrip locale={locale} />
+      {S.settings.partnerStrip !== false && <PartnerStrip locale={locale} />}
       <Footer locale={locale} />
       <Motion />
       <ScrollRestoration />
@@ -23,14 +27,14 @@ export default function Layout({ locale }: { locale: Locale }) {
 }
 
 /** Cienki pasek z linkami tekstowymi, jak w referencji. */
-function Header({ locale: l }: { locale: Locale }) {
+export function Header({ locale: l, home }: { locale: Locale; home?: boolean }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
   const matches = useMatches()
   const handle = matches.at(-1)?.handle as RouteHandle | undefined
   const alt = handle?.alt
-  const isHome = /^\/(en\/?)?$/.test(pathname)
+  const isHome = home ?? /^\/(en\/?)?$/.test(pathname)
 
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 24)
@@ -43,17 +47,9 @@ function Header({ locale: l }: { locale: Locale }) {
     document.documentElement.classList.toggle('menu-open', open)
   }, [open])
 
-  const left = [
-    { to: href(l, 'program'), label: t(ui.nav.program, l) },
-    { to: href(l, 'tickets'), label: t(ui.nav.tickets, l) },
-    { to: href(l, 'exhibitors'), label: t(ui.nav.exhibitors, l) },
-    { to: href(l, 'about'), label: t(ui.nav.about, l) },
-  ]
-  const right = [
-    { to: href(l, 'partners'), label: t(ui.nav.partners, l) },
-    { to: href(l, 'news'), label: t(ui.nav.news, l) },
-    { to: href(l, 'contact'), label: t(ui.nav.contact, l) },
-  ]
+  const nav = (items: typeof S.nav.left) => items.map((x) => ({ to: link(l, x.link) || '#', label: t(x.label, l) }))
+  const left = nav(S.nav.left)
+  const right = nav(S.nav.right)
   const other: Locale = l === 'pl' ? 'en' : 'pl'
 
   return (
@@ -66,8 +62,8 @@ function Header({ locale: l }: { locale: Locale }) {
             </NavLink>
           ))}
         </nav>
-        <Link to={href(l, 'home')} className={`hdr__logo ${!isHome || scrolled || open ? 'hdr__logo--on' : ''}`} aria-label={EVENT.brand}>
-          Beauty &amp; Hair Expo
+        <Link to={pageHref(l, 'home')} className={`hdr__logo ${!isHome || scrolled || open ? 'hdr__logo--on' : ''}`} aria-label={S.event.brand}>
+          {S.event.brand}
         </Link>
         <div className="hdr__right">
           <nav className="hdr__nav" aria-label="Menu 2">
@@ -77,10 +73,10 @@ function Header({ locale: l }: { locale: Locale }) {
               </NavLink>
             ))}
           </nav>
-          <Link className="hdr__link hdr__lang" to={alt?.[other] ?? href(other, 'home')} hrefLang={other} lang={other}>
+          <Link className="hdr__link hdr__lang" to={alt?.[other] ?? pageHref(other, 'home')} hrefLang={other} lang={other}>
             {other.toUpperCase()}
           </Link>
-          <Link className="hdr__cta" to={href(l, 'tickets')}>
+          <Link className="hdr__cta" to={pageHref(l, 'tickets')}>
             {t(ui.buyTicket, l)}
           </Link>
           <button className="hdr__burger" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen((v) => !v)}>
@@ -98,13 +94,13 @@ function Header({ locale: l }: { locale: Locale }) {
           ))}
         </nav>
         <div className="mnav__foot">
-          <Link className="btn btn--dark" to={href(l, 'tickets')}>
+          <Link className="btn btn--dark" to={pageHref(l, 'tickets')}>
             {t(ui.buyTicket, l)}
           </Link>
-          <Link className="btn btn--outline" to={href(l, 'exhibit')}>
+          <Link className="btn btn--outline" to={pageHref(l, 'exhibit')}>
             {t(ui.becomeExhibitor, l)}
           </Link>
-          <Link className="mnav__lang" to={alt?.[other] ?? href(other, 'home')}>
+          <Link className="mnav__lang" to={alt?.[other] ?? pageHref(other, 'home')}>
             {other === 'en' ? 'English' : 'Polski'}
           </Link>
         </div>
@@ -114,13 +110,13 @@ function Header({ locale: l }: { locale: Locale }) {
 }
 
 /** Pas partnerów na każdej stronie — stałe miejsce na logotypy sponsorów. */
-function PartnerStrip({ locale: l }: { locale: Locale }) {
-  const names = PARTNERS.slice(0, 3).flatMap((g) => g.names)
+export function PartnerStrip({ locale: l }: { locale: Locale }) {
+  const names = S.partners.slice(0, 3).flatMap((g) => g.items.map((x) => x.name))
   return (
     <section className="pstrip wrap" aria-label={l === 'pl' ? 'Partnerzy' : 'Partners'}>
       <div className="pstrip__head">
         <p className="kicker">{l === 'pl' ? 'Partnerzy Beauty & Hair Expo' : 'Beauty & Hair Expo partners'}</p>
-        <Link className="more" to={href(l, 'partners')}>
+        <Link className="more" to={pageHref(l, 'partners')}>
           {l === 'pl' ? 'Zostań partnerem →' : 'Become a partner →'}
         </Link>
       </div>
@@ -135,55 +131,26 @@ function PartnerStrip({ locale: l }: { locale: Locale }) {
   )
 }
 
-function Footer({ locale: l }: { locale: Locale }) {
-  const cols = [
-    {
-      title: { pl: 'Targi', en: 'Expo' },
-      links: [
-        [href(l, 'about'), ui.nav.about],
-        [href(l, 'program'), ui.nav.program],
-        [href(l, 'tickets'), ui.nav.tickets],
-        [href(l, 'visit'), { pl: 'Dojazd', en: 'Getting there' }],
-      ],
-    },
-    {
-      title: { pl: 'Współpraca', en: 'Work with us' },
-      links: [
-        [href(l, 'exhibit'), ui.becomeExhibitor],
-        [href(l, 'exhibitors'), { pl: 'Katalog wystawców', en: 'Exhibitors' }],
-        [href(l, 'partners'), { pl: 'Partnerzy i reklama', en: 'Partners & ads' }],
-        [href(l, 'media'), { pl: 'Media', en: 'Press' }],
-      ],
-    },
-    {
-      title: { pl: 'Więcej', en: 'More' },
-      links: [
-        [href(l, 'news'), ui.nav.news],
-        [href(l, 'contact'), ui.nav.contact],
-        [href(l, 'terms'), { pl: 'Regulamin', en: 'Terms' }],
-        [href(l, 'privacy'), { pl: 'Prywatność', en: 'Privacy' }],
-      ],
-    },
-  ] as const
-
+export function Footer({ locale: l }: { locale: Locale }) {
+  const EVENT = S.event
   return (
     <footer className="ftr wrap">
       <div className="ftr__top">
         <div className="ftr__brand">
-          <p className="ftr__logo">Beauty &amp; Hair Expo</p>
+          <p className="ftr__logo">{EVENT.brand}</p>
           <p className="ftr__meta">
             {t(EVENT.dates, l)}
             <br />
             {EVENT.venue}, {t(EVENT.city, l)}
           </p>
         </div>
-        {cols.map((c) => (
-          <div key={c.title.pl} className="ftr__col">
+        {S.nav.footer.map((c, i) => (
+          <div key={i} className="ftr__col">
             <h3>{t(c.title, l)}</h3>
             <ul>
-              {c.links.map(([to, label]) => (
-                <li key={to}>
-                  <Link to={to}>{t(label, l)}</Link>
+              {c.links.map((x, j) => (
+                <li key={j}>
+                  <Link to={link(l, x.link) || '#'}>{t(x.label, l)}</Link>
                 </li>
               ))}
             </ul>
@@ -192,7 +159,7 @@ function Footer({ locale: l }: { locale: Locale }) {
         <div className="ftr__col">
           <h3>{l === 'pl' ? 'Obserwuj' : 'Follow'}</h3>
           <ul>
-            {EVENT.social.map((s) => (
+            {S.settings.social.map((s) => (
               <li key={s.name}>
                 <a href={s.url} target="_blank" rel="noopener noreferrer">
                   {s.name}
@@ -204,9 +171,9 @@ function Footer({ locale: l }: { locale: Locale }) {
       </div>
       <div className="ftr__bottom">
         <span>
-          © 2028 {EVENT.brand} · {l === 'pl' ? 'Organizator' : 'Organiser'}: {EVENT.organizer}
+          © {new Date(EVENT.startsAt).getFullYear()} {EVENT.brand} · {l === 'pl' ? 'Organizator' : 'Organiser'}: {EVENT.organizer}
         </span>
-        <span>{t(ui.sample, l)}</span>
+        <span>{t(S.settings.footerNote, l)}</span>
       </div>
     </footer>
   )

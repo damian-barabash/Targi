@@ -1,6 +1,8 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { href, type Locale } from '../i18n'
+import type { Locale } from '../i18n'
+import { pageHref } from '../lib/link'
+import { S } from '../content/site'
 import { insertRow } from '../lib/supabase'
 import { useLocale } from './ui'
 
@@ -25,11 +27,11 @@ function Consent({ l, name, children }: { l: Locale; name: string; children?: Re
         {children ??
           (l === 'pl' ? (
             <>
-              Akceptuję <Link to={href(l, 'privacy')}>politykę prywatności</Link> i zgadzam się na kontakt w sprawie zgłoszenia.
+              Akceptuję <Link to={pageHref(l, 'privacy')}>politykę prywatności</Link> i zgadzam się na kontakt w sprawie zgłoszenia.
             </>
           ) : (
             <>
-              I accept the <Link to={href(l, 'privacy')}>privacy policy</Link> and agree to be contacted about my request.
+              I accept the <Link to={pageHref(l, 'privacy')}>privacy policy</Link> and agree to be contacted about my request.
             </>
           ))}
       </span>
@@ -212,4 +214,70 @@ export function NewsletterForm({ dark = false }: { dark?: boolean }) {
       {status === 'error' && <p className="form__err">{L.error[l]}</p>}
     </form>
   )
+}
+
+export type LeadKind = 'exhibitor' | 'partner' | 'media' | 'contact'
+
+/** Pola formularzy zgłoszeń — stałe dla każdego rodzaju (treść wokół formularza edytuje panel). */
+export function leadFields(kind: LeadKind): Field[] {
+  const msg = (pl: string, en: string, required = false): Field => ({ name: 'message', label: { pl, en }, type: 'textarea', required })
+  if (kind === 'exhibitor')
+    return [
+      ...baseFields.map((f) => (f.name === 'company' ? { ...f, required: true } : f)),
+      { name: 'nip', label: { pl: 'NIP', en: 'VAT number' } },
+      { name: 'zone', label: { pl: 'Strefa', en: 'Zone' }, type: 'select', options: S.zones.map((z) => ({ value: z.short, label: z.name })) },
+      {
+        name: 'stand_size',
+        label: { pl: 'Wielkość stoiska', en: 'Stand size' },
+        type: 'select',
+        options: [
+          { value: '6-12', label: { pl: '6–12 m²', en: '6–12 m²' } },
+          { value: '12-30', label: { pl: '12–30 m²', en: '12–30 m²' } },
+          { value: '30+', label: { pl: 'powyżej 30 m²', en: 'over 30 m²' } },
+          { value: 'unknown', label: { pl: 'Jeszcze nie wiem', en: 'Not sure yet' } },
+        ],
+      },
+      msg('Czym się zajmujecie i czego potrzebujecie?', 'What do you do and what do you need?'),
+    ]
+  if (kind === 'partner')
+    return [
+      ...baseFields,
+      {
+        name: 'topic',
+        label: { pl: 'Interesuje mnie', en: 'I’m interested in' },
+        type: 'select',
+        options: [
+          { value: 'sponsor', label: { pl: 'Sponsoring', en: 'Sponsorship' } },
+          { value: 'ads', label: { pl: 'Reklama na stronie', en: 'Website advertising' } },
+          { value: 'media', label: { pl: 'Patronat medialny', en: 'Media partnership' } },
+          { value: 'other', label: { pl: 'Inne', en: 'Other' } },
+        ],
+      },
+      msg('Wiadomość', 'Message'),
+    ]
+  if (kind === 'media')
+    return [
+      ...baseFields.map((f) => (f.name === 'company' ? { ...f, label: { pl: 'Redakcja', en: 'Media outlet' }, required: true } : f)),
+      { name: 'url', label: { pl: 'Link do medium', en: 'Outlet URL' }, wide: true },
+      msg('Planowane materiały', 'Planned coverage'),
+    ]
+  return [
+    baseFields[0],
+    baseFields[1],
+    {
+      name: 'topic',
+      label: { pl: 'Temat', en: 'Topic' },
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'kontakt', label: { pl: 'Pytanie ogólne', en: 'General question' } },
+        { value: 'bilety', label: { pl: 'Bilety', en: 'Tickets' } },
+        { value: 'wystawcy', label: { pl: 'Wystawcy', en: 'Exhibitors' } },
+        { value: 'partnerzy', label: { pl: 'Partnerstwo / reklama', en: 'Partnership / ads' } },
+        { value: 'media', label: { pl: 'Media', en: 'Press' } },
+        { value: 'vip', label: { pl: 'Goście VIP', en: 'VIP guests' } },
+      ],
+    },
+    msg('Wiadomość', 'Message', true),
+  ]
 }
