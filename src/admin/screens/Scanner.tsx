@@ -165,25 +165,22 @@ export default function Scanner({ standalone }: { standalone?: boolean }) {
       </header>
 
       <div className="scan__stats">
-        <div>
-          <b>{stats?.today ?? '—'}</b>
-          <span>weszło dziś</span>
-        </div>
-        <div>
-          <b>{stats?.mine ?? '—'}</b>
-          <span>przez Ciebie</span>
-        </div>
-        <div>
-          <b>{stats?.reentry ?? '—'}</b>
-          <span>powroty</span>
-        </div>
-        <div className="bad">
-          <b>{stats?.rejected ?? '—'}</b>
-          <span>odrzucone</span>
-        </div>
+        {(
+          [
+            ['Weszło', stats?.today],
+            ['Moje', stats?.mine],
+            ['Powroty', stats?.reentry],
+            ['Odmowy', stats?.rejected],
+          ] as const
+        ).map(([l, n], i) => (
+          <div key={l} className={i === 3 && n ? 'bad' : ''}>
+            <span>{l}</span>
+            <b key={n ?? 'x'}>{n ?? '—'}</b>
+          </div>
+        ))}
       </div>
 
-      <div className={`scan__cam scan__cam--${cam}`}>
+      <div className={`scan__cam scan__cam--${cam} ${checking ? 'is-checking' : ''}`}>
         <video ref={video} muted playsInline />
         <canvas ref={canvas} hidden />
         {cam === 'on' && (
@@ -197,7 +194,9 @@ export default function Scanner({ standalone }: { standalone?: boolean }) {
         )}
         {cam !== 'on' && (
           <div className="scan__idle">
-            <Icon n="target" s={42} />
+            <span className="scan__idleic">
+              <Icon n="target" s={26} />
+            </span>
             <p>{cam === 'error' ? camErr : 'Włącz kamerę i skieruj ją na kod QR z biletu.'}</p>
             <button type="button" className="scan__go" onClick={start} disabled={cam === 'starting'}>
               {cam === 'starting' ? 'Włączam…' : 'Włącz kamerę'}
@@ -205,12 +204,12 @@ export default function Scanner({ standalone }: { standalone?: boolean }) {
           </div>
         )}
         {checking && <div className="scan__checking">Sprawdzam…</div>}
+        {cam === 'on' && (
+          <button type="button" className="scan__stop" onClick={stop}>
+            <Icon n="x" s={14} /> Wyłącz
+          </button>
+        )}
       </div>
-      {cam === 'on' && (
-        <button type="button" className="scan__stop" onClick={stop}>
-          Wyłącz kamerę
-        </button>
-      )}
 
       <form
         className="scan__manual"
@@ -226,6 +225,7 @@ export default function Scanner({ standalone }: { standalone?: boolean }) {
       </form>
       {err && <p className="scan__err">{err}</p>}
 
+      {hist.length > 0 && <p className="scan__h">Ostatnie skany</p>}
       {hist.length > 0 && (
         <ul className="scan__hist">
           {hist.map((h) => (
@@ -243,22 +243,37 @@ export default function Scanner({ standalone }: { standalone?: boolean }) {
 
       {res && v && (
         <div className={`scan-res scan-res--${v.tone}`} onClick={() => setRes(null)} role="alert">
-          <div className="scan-res__ic">
-            <Icon n={v.icon} s={64} />
+          <span className="scan-res__pulse" aria-hidden="true" />
+          <div className="scan-res__ic" aria-hidden="true">
+            <svg viewBox="0 0 52 52" width="76" height="76" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="26" cy="26" r="23" className="scan-res__ring" />
+              <path className="scan-res__mark" d={v.tone === 'ok' ? 'M15 27l8 8 15-17' : v.tone === 'warn' ? 'M26 14v15M26 37v.4' : 'M18 18l16 16M34 18L18 34'} />
+            </svg>
           </div>
           <h2>{v.title}</h2>
-          {res.type && <p className="scan-res__type">{res.type}</p>}
-          {res.holder && <p className="scan-res__who">{res.holder}</p>}
-          <div className="scan-res__meta">
-            {res.result === 'reentry' && res.first && <span>Pierwsze wejście dziś o {hm(res.first)}</span>}
-            {res.result === 'again' && res.first && <span>Wszedł(a) dziś o {hm(res.first)}. Ten bilet nie pozwala na ponowne wejście.</span>}
-            {res.result === 'not_today' && res.dates && <span>Ważny: {res.dates.map(day).join(', ')}</span>}
-            {res.result === 'unknown' && <span>Tego kodu nie ma w systemie. Poproś o bilet z e-maila.</span>}
-            {res.result === 'cancelled' && <span>Bilet został anulowany. Skieruj gościa do kasy.</span>}
-            {res.catering && ['ok', 'reentry', 'forced'].includes(res.result) && <span className="pill">Catering</span>}
-            {res.kind === 'invitation' && <span className="pill">Zaproszenie</span>}
-            {res.order && <span className="mono">{res.order} · {res.code}</span>}
-          </div>
+          <p className="scan-res__sub">
+            {res.result === 'reentry' && res.first && <>Pierwsze wejście dziś o {hm(res.first)}</>}
+            {res.result === 'again' && <>Wszedł(a) dziś{res.first ? ` o ${hm(res.first)}` : ''}. Ten bilet nie pozwala na ponowne wejście.</>}
+            {res.result === 'not_today' && res.dates && <>Ważny: {res.dates.map(day).join(', ')}</>}
+            {res.result === 'unknown' && <>Tego kodu nie ma w systemie. Poproś o bilet z e-maila.</>}
+            {res.result === 'cancelled' && <>Bilet został anulowany. Skieruj gościa do kasy.</>}
+          </p>
+          {res.type && (
+            <div className="scan-stub">
+              <strong>{res.type}</strong>
+              {res.holder && <span className="scan-stub__who">{res.holder}</span>}
+              <div className="scan-stub__tags">
+                {res.catering && <i>Catering</i>}
+                {res.kind === 'invitation' && <i>Zaproszenie</i>}
+                {res.reentry === false && <i>Jedno wejście</i>}
+              </div>
+              <div className="scan-stub__foot">
+                <span>{res.order}</span>
+                <span>{res.code}</span>
+              </div>
+            </div>
+          )}
+          {!res.type && <p className="scan-res__code">{res.code}</p>}
           {res.result === 'not_today' && canForce && (
             <button
               type="button"
@@ -274,6 +289,7 @@ export default function Scanner({ standalone }: { standalone?: boolean }) {
             </button>
           )}
           <p className="scan-res__tap">{v.tone === 'ok' ? 'Następny gość…' : 'Dotknij, aby skanować dalej'}</p>
+          {v.tone === 'ok' && <span className="scan-res__bar" aria-hidden="true" />}
         </div>
       )}
     </div>

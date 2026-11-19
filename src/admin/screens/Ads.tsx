@@ -206,7 +206,7 @@ export default function Ads({ sub }: { sub?: string }) {
             </div>
             <div className="cards2">
               <Card title="Wyświetlenia dziennie">
-                <TimeChart height={200} days={range} series={[{ name: 'Wyświetlenia', color: '#7d6139', values: byDay('impressions') }]} />
+                <TimeChart height={200} days={range} series={[{ name: 'Wyświetlenia', color: '#1a1a18', values: byDay('impressions') }]} />
               </Card>
               <Card title="Kliknięcia dziennie">
                 <TimeChart height={200} days={range} series={[{ name: 'Kliknięcia', color: '#2a78d6', values: byDay('clicks') }]} />

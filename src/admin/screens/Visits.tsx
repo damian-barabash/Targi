@@ -47,7 +47,7 @@ export default function Visits() {
           </div>
         }
       >
-        <TimeChart height={260} days={range} series={[{ name: metric === 'visits' ? 'Wizyty' : 'Odsłony', color: '#7d6139', values: range.map((x) => map.get(x)?.[metric] ?? 0) }]} />
+        <TimeChart height={260} days={range} series={[{ name: metric === 'visits' ? 'Wizyty' : 'Odsłony', color: '#1a1a18', values: range.map((x) => map.get(x)?.[metric] ?? 0) }]} />
       </Card>
       <div className="cards2 mt">
         <Card title="Najczęściej oglądane strony">

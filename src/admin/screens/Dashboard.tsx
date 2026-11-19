@@ -97,7 +97,7 @@ export default function Dashboard() {
 
       <div className="cards21">
         <Card title="Wizyty dziennie" aside={<a href="#/stats">Statystyki →</a>}>
-          <TimeChart days={range} series={[{ name: 'Wizyty', color: '#7d6139', values: range.map((x) => vmap.get(x)?.visits ?? 0) }]} />
+          <TimeChart days={range} series={[{ name: 'Wizyty', color: '#1a1a18', values: range.map((x) => vmap.get(x)?.visits ?? 0) }]} />
         </Card>
         <Card title="Skąd przychodzą goście">
           <BarList items={d.sources.map((x) => ({ label: SOURCE[x.k] ?? x.k, value: x.v }))} />

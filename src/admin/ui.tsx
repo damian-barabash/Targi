@@ -79,6 +79,9 @@ const P: Record<string, string> = {
   note: 'M5 4h14v11l-5 5H5zM14 20v-5h5M8 9h8M8 13h5',
   merge: 'M6 4v4a6 6 0 0 0 6 6h6M15 11l3 3-3 3M6 20v-6',
   userplus: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3 3-5 6-5s6 2 6 5M19 8v6M16 11h6',
+  sidebar: 'M4 5h16v14H4zM9.500 5v14',
+  chevron: 'M6 9l6 6 6-6',
+  chevrons: 'M8 10l4-4 4 4M8 14l4 4 4-4',
   crm: 'M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2.500 20c0-3 2.500-5 5.500-5s5.500 2 5.500 5M14 5h7M14 9h7M16 13h5',
 }
 export function Icon({ n, s = 18, className = '' }: { n: string; s?: number; className?: string }) {
@@ -104,16 +107,17 @@ export function Badge({ children, tone = 'gray' }: { children: ReactNode; tone?:
   return <span className={`badge badge--${tone}`}>{children}</span>
 }
 
+/** Karta w stylu „tacki”: szare obramowanie z nagłówkiem, w środku biały panel. */
 export function Card({ title, aside, children, className = '', pad = true }: { title?: ReactNode; aside?: ReactNode; children: ReactNode; className?: string; pad?: boolean }) {
   return (
-    <section className={`card ${className}`}>
+    <section className={`card ${title || aside ? '' : 'card--bare'} ${className}`}>
       {(title || aside) && (
         <header className="card__head">
           <h2>{title}</h2>
           {aside && <div className="card__aside">{aside}</div>}
         </header>
       )}
-      <div className={pad ? 'card__body' : ''}>{children}</div>
+      <div className={`card__in ${pad ? 'card__body' : ''}`}>{children}</div>
     </section>
   )
 }
@@ -148,18 +152,25 @@ export const Spinner = ({ label = 'Wczytywanie…' }: { label?: string }) => (
 
 /* ───────── okna ───────── */
 export function Modal({ title, onClose, children, footer, wide, side, aside, className = '' }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; side?: boolean; aside?: ReactNode; className?: string }) {
+  const [leaving, setLeaving] = useState(false)
+  // zamknięcie z animacją wyjścia (tło, Esc, krzyżyk)
+  const close = () => {
+    if (leaving) return
+    setLeaving(true)
+    setTimeout(onClose, 180)
+  }
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close()
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  }, [onClose, leaving])
   return (
-    <div className={`ov ${side ? 'ov--side' : ''}`} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className={`ov ${side ? 'ov--side' : ''} ${leaving ? 'is-leaving' : ''}`} onMouseDown={(e) => e.target === e.currentTarget && close()}>
       {aside}
       <div className={`modal ${wide ? 'modal--wide' : ''} ${side ? 'modal--side' : ''} ${className}`} role="dialog" aria-modal="true">
         <header className="modal__head">
           <h2>{title}</h2>
-          <Btn icon="x" kind="plain" title="Zamknij" onClick={onClose} />
+          <Btn icon="x" kind="plain" title="Zamknij" onClick={close} />
         </header>
         <div className="modal__body">{children}</div>
         {footer && <footer className="modal__foot">{footer}</footer>}
@@ -229,25 +240,32 @@ export function Tabs<V extends string>({ value, onChange, items }: { value: V; o
 export function Stat({ label, value, delta, hint, icon }: { label: string; value: ReactNode; delta?: number | null; hint?: string; icon?: string }) {
   return (
     <div className="stat-a">
-      <div className="stat-a__top">
-        <span>{label}</span>
-        {icon && <Icon n={icon} s={16} />}
+      <div className="stat-a__main">
+        <div>
+          <span className="stat-a__l">{label}</span>
+          <strong>{value}</strong>
+        </div>
+        {icon && (
+          <span className="stat-a__ic">
+            <Icon n={icon} s={16} />
+          </span>
+        )}
       </div>
-      <strong>{value}</strong>
       <div className="stat-a__foot">
         {delta != null && Number.isFinite(delta) && (
           <span className={`delta ${delta > 0 ? 'delta--up' : delta < 0 ? 'delta--down' : ''}`}>
-            {delta > 0 ? '▲' : delta < 0 ? '▼' : '•'} {Math.abs(delta)}%
+            {delta > 0 ? '+' : delta < 0 ? '−' : ''}
+            {Math.abs(delta)}%
           </span>
         )}
-        {hint && <span>{hint}</span>}
+        <span>{hint ?? '\u00a0'}</span>
       </div>
     </div>
   )
 }
 
 /* ───────── wykresy (SVG, jedna oś, podpowiedź pod kursorem) ───────── */
-export const SERIES = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300']
+export const SERIES = ['#1a1a18', '#a3a39c', '#16a34a', '#d97706', '#2563eb', '#d4d4cf']
 const nice = (max: number) => {
   if (max <= 4) return 4
   const p = 10 ** Math.floor(Math.log10(max))
@@ -370,7 +388,7 @@ export function TimeChart({ days, series, kind = 'line', height = 220 }: { days:
 }
 
 /** Ranking: poziome paski z wartością — czytelniejsze niż koło. */
-export function BarList({ items, color = '#7d6139', fmt = (v: number) => String(v) }: { items: { label: string; value: number; color?: string }[]; color?: string; fmt?: (v: number) => string }) {
+export function BarList({ items, color = '#1a1a18', fmt = (v: number) => String(v) }: { items: { label: string; value: number; color?: string }[]; color?: string; fmt?: (v: number) => string }) {
   const max = Math.max(1, ...items.map((x) => x.value))
   const total = items.reduce((s, x) => s + x.value, 0)
   if (!items.length || !total) return <p className="chart__empty chart__empty--static">Brak danych w tym okresie</p>
