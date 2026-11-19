@@ -27,6 +27,8 @@ export type TicketType = {
   /** ile dni obejmuje bilet (1 = wybór dnia w konfiguratorze) */
   days: 1 | 2
   cateringIncluded?: boolean
+  /** czy skaner wpuszcza ponownie tego samego dnia (domyślnie tak) */
+  reentry?: boolean
   active?: boolean
   /** limit sztuk i okno sprzedaży — egzekwowane po podłączeniu płatności */
   limit?: number

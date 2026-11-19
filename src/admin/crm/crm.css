@@ -120,7 +120,7 @@ select.if__in { appearance: none; cursor: pointer; }
 
 /* kompozytor */
 .cmp { background: #fff; border: 1px solid var(--a-line); border-radius: 12px; overflow: hidden; box-shadow: var(--a-shadow); }
-.cmp__kinds { display: flex; gap: 2px; padding: 6px 6px 0; border-bottom: 1px solid var(--a-line); overflow-x: auto; }
+.cmp__kinds { display: flex; flex-wrap: wrap; gap: 2px; padding: 6px 6px 0; border-bottom: 1px solid var(--a-line); }
 .cmp__kinds button { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px 9px; font-size: 13px; font-weight: 500; color: var(--a-ink2); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
 .cmp__kinds button:hover { color: var(--a-ink); }
 .cmp__kinds button.on { color: var(--a-ink); border-bottom-color: var(--a-gold); font-weight: 600; }

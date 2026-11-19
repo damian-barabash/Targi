@@ -16,3 +16,11 @@ export async function insertRow(table: 'leads' | 'newsletter_subscribers', row: 
   // 409 = ten e-mail jest już zapisany do tej grupy — traktujemy jako sukces
   if (!res.ok && res.status !== 409) throw new Error(`HTTP ${res.status}`)
 }
+
+/** Mała funkcja RPC dostępna bez logowania (np. podgląd biletu). */
+export async function rpcPublic<R>(name: string, args: Record<string, unknown>): Promise<R> {
+  if (!URL || !KEY) throw new Error('Supabase is not configured')
+  const res = await fetch(`${URL}/rest/v1/rpc/${name}`, { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(args) })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return (await res.json()) as R
+}

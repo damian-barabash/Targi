@@ -200,7 +200,7 @@ select.in { appearance: none; padding-right: 30px; background: #fff url("data:im
 .badge--red { background: #fbe9e7; color: #a1241c; }
 .badge--blue { background: #e3edf9; color: #1a4f93; }
 .badge--amber { background: #fbf0d6; color: #7a4f08; }
-.tabs-a { display: inline-flex; gap: 2px; border-bottom: 1px solid var(--a-line); margin-bottom: 14px; max-width: 100%; overflow-x: auto; }
+.tabs-a { display: inline-flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid var(--a-line); margin-bottom: 14px; max-width: 100%; }
 .tabs-a button, .tabs-a a { all: unset; cursor: pointer; padding: 8px 12px; font-size: 13.5px; font-weight: 500; color: var(--a-ink2); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
 .tabs-a .on { color: var(--a-ink); border-bottom-color: var(--a-gold); font-weight: 600; }
 .tabs-a em { font-style: normal; font-size: 11px; background: #ece8e1; border-radius: 999px; padding: 0 6px; color: var(--a-ink2); }
@@ -446,3 +446,40 @@ select.in { appearance: none; padding-right: 30px; background: #fff url("data:im
 @media (prefers-reduced-motion: reduce) {
   html.adm-root * { animation: none !important; transition: none !important; }
 }
+
+/* paski przewijania: bez poziomych „ślizgaczy”, pionowe cienkie i dyskretne (także przy „zawsze pokazuj paski” w macOS) */
+html.adm-root, html.adm-root * { scrollbar-width: thin; scrollbar-color: rgba(87, 80, 74, 0.22) transparent; }
+html.adm-root ::-webkit-scrollbar { width: 6px; height: 0; }
+html.adm-root ::-webkit-scrollbar-thumb { background: rgba(87, 80, 74, 0.22); border-radius: 6px; }
+html.adm-root ::-webkit-scrollbar-track { background: transparent; }
+.tw { scrollbar-width: none; }
+.tw::-webkit-scrollbar { display: none; }
+
+/* ───────── sprzedaż biletów ───────── */
+.otix { display: grid; gap: 6px; }
+.otix__i { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--a-line); border-radius: 10px; background: #fff; }
+.otix__i strong { display: block; font-size: 13.5px; }
+.otix__i small { display: block; font-size: 12px; color: var(--a-mute); }
+.otix__i .mono { display: inline-block; margin-top: 3px; letter-spacing: 0.5px; color: var(--a-ink2); }
+.otix__i.is-off { opacity: 0.55; }
+.otix__i.is-off strong { text-decoration: line-through; }
+.otix__r { display: flex; align-items: center; gap: 4px; }
+.ilines { display: grid; gap: 8px; }
+.iline { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; background: #faf8f5; border: 1px solid var(--a-line); }
+.iline > select { flex: 1 1 200px; width: auto; }
+.iline__chk { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--a-ink2); cursor: pointer; }
+.iline__qty { width: 70px !important; flex: none; }
+.iline__sum { min-width: 70px; text-align: right; font-weight: 600; font-size: 13.5px; }
+
+/* ───────── powiadomienia ───────── */
+.nset { display: grid; gap: 14px; max-width: 760px; }
+.nset__h { display: flex; gap: 12px; margin-bottom: 12px; }
+.nset__h strong { font-size: 15px; }
+.nset__ic { width: 36px; height: 36px; border-radius: 10px; background: var(--a-gold-bg); color: var(--a-gold); display: grid; place-items: center; flex: none; }
+.nset__off { font-size: 12px; color: var(--a-mute); margin-top: 6px !important; }
+.emails { display: flex; flex-wrap: wrap; gap: 6px; padding: 7px; border: 1px solid var(--a-line2); border-radius: 9px; background: #fff; min-height: 42px; align-items: center; }
+.emails:focus-within { border-color: var(--a-gold-l); box-shadow: 0 0 0 3px rgba(183, 156, 107, 0.18); }
+.emails__chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 10px; border-radius: 999px; background: #f1ede6; font-size: 13px; }
+.emails__chip button { all: unset; cursor: pointer; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: var(--a-mute); }
+.emails__chip button:hover { background: #e2dcd2; color: var(--a-ink); }
+.emails input { flex: 1; min-width: 180px; border: 0; outline: 0; font: inherit; font-size: 13.5px; padding: 4px; background: none; }

@@ -1,7 +1,7 @@
 // Konta panelu: tylko administrator. Konta tworzy się tutaj (rejestracja na stronie jest wyłączona).
 import { caller, cors, json, service } from '../_shared/auth.ts'
 
-const ROLES = ['admin', 'exhibitors', 'tickets', 'marketing', 'reports']
+const ROLES = ['admin', 'exhibitors', 'tickets', 'marketing', 'reports', 'scanner', 'sales']
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })

@@ -16,6 +16,9 @@ import Newsletter from './screens/Newsletter'
 import Ads from './screens/Ads'
 import Visits from './screens/Visits'
 import CrmScreen from './crm/Crm'
+import Orders from './screens/Orders'
+import Scanner from './screens/Scanner'
+import NotifySettings from './screens/NotifySettings'
 import { Editions, History, NavScreen, PublishScreen, Users } from './screens/System'
 
 /* ───────── prosty router po # (jedna statyczna strona /admin/) ───────── */
@@ -32,6 +35,10 @@ export function useRoute(): string[] {
 export const go = (to: string) => {
   window.location.hash = `/${to}`
 }
+
+/** Role z wąskim dostępem widzą tylko swoje ekrany. */
+export const ONLY: Record<string, string[]> = { sales: ['crm'], scanner: ['scan'] }
+const allowed = (role: string, to: string) => !ONLY[role] || ONLY[role].includes(to)
 
 type Item = { to: string; label: string; icon: string; show?: (role: string) => boolean; badge?: number }
 const staff = () => true
@@ -66,6 +73,8 @@ const MENU: { title?: string; items: Item[] }[] = [
     title: 'Sprzedaż i marketing',
     items: [
       { to: 'crm', label: 'Klienci (CRM)', icon: 'crm' },
+      { to: 'orders', label: 'Sprzedaż biletów', icon: 'ticket', show: (r) => ['admin', 'tickets', 'reports'].includes(r) },
+      { to: 'scan', label: 'Skaner biletów', icon: 'target', show: (r) => ['admin', 'tickets'].includes(r) },
       { to: 'leads', label: 'Zgłoszenia', icon: 'inbox' },
       { to: 'newsletter', label: 'Newsletter', icon: 'send' },
       { to: 'ads', label: 'Reklama', icon: 'ad' },
@@ -77,6 +86,7 @@ const MENU: { title?: string; items: Item[] }[] = [
     items: [
       { to: 'nav', label: 'Menu i stopka', icon: 'menu', show: notReports },
       { to: 'c/settings', label: 'Ustawienia strony', icon: 'settings', show: notReports },
+      { to: 'notify', label: 'Powiadomienia e-mail', icon: 'mail', show: (r) => r === 'admin' },
       { to: 'users', label: 'Użytkownicy', icon: 'shield', show: (r) => r === 'admin' },
       { to: 'history', label: 'Historia zmian', icon: 'history', show: staff },
       { to: 'publish', label: 'Publikacja i wersje', icon: 'rocket', show: staff },
@@ -297,7 +307,7 @@ function Shell({ route, children }: { route: string[]; children: ReactNode }) {
         </a>
         <nav className="side__nav">
           {MENU.map((g, i) => {
-            const items = g.items.filter((x) => !x.show || x.show(me.role))
+            const items = g.items.filter((x) => (!x.show || x.show(me.role)) && allowed(me.role, x.to))
             if (!items.length) return null
             return (
               <div key={i} className="side__group">
@@ -328,6 +338,8 @@ function Shell({ route, children }: { route: string[]; children: ReactNode }) {
       <div className="main">
         <header className="top">
           <Btn kind="plain" icon="menu" title="Menu" className="top__burger" onClick={() => setOpen(!open)} />
+          {!ONLY[me.role] && (
+          <>
           <label className="top__edition" title="Edycja targów, której dane edytujesz">
             <Icon n="layers" s={15} />
             <select value={editionId} onChange={(e) => switchEdition(e.target.value)}>
@@ -346,6 +358,8 @@ function Shell({ route, children }: { route: string[]; children: ReactNode }) {
               </button>
             ))}
           </div>
+          </>
+          )}
           <span className="grow" />
           {dirty > 0 && (
             <>
@@ -355,10 +369,12 @@ function Shell({ route, children }: { route: string[]; children: ReactNode }) {
               </Btn>
             </>
           )}
-          <Btn kind="primary" icon="check" busy={saving} disabled={!dirty} onClick={() => save()} title="Zapisz wersję roboczą (Ctrl/⌘ + S)">
-            Zapisz
-          </Btn>
-          {me.role !== 'reports' && (
+          {!ONLY[me.role] && (
+            <Btn kind="primary" icon="check" busy={saving} disabled={!dirty} onClick={() => save()} title="Zapisz wersję roboczą (Ctrl/⌘ + S)">
+              Zapisz
+            </Btn>
+          )}
+          {me.role !== 'reports' && !ONLY[me.role] && (
             <Btn kind="gold" icon="rocket" onClick={() => setPub(true)} className={pending || dirty ? 'has-dot' : ''} title={pending ? 'Są zmiany, których nie ma jeszcze na stronie' : 'Strona jest aktualna'}>
               Opublikuj
             </Btn>
@@ -375,12 +391,17 @@ function Shell({ route, children }: { route: string[]; children: ReactNode }) {
 }
 
 function Screen({ route }: { route: string[] }) {
-  const [a, b, c] = route
+  const role = useStore((s) => s.me!.role)
+  let [a, b, c] = route
+  if (ONLY[role] && !ONLY[role].includes(a ?? '')) [a, b, c] = [ONLY[role][0], undefined as any, undefined as any]
   if (!a) return <Dashboard />
   if (a === 'pages') return <PagesList />
   if (a === 'c' && COLLECTIONS[b]) return <CollectionScreen key={b} id={b} index={c} />
   if (a === 'media') return <MediaScreen />
   if (a === 'crm') return <CrmScreen sub={b} id={c} />
+  if (a === 'orders') return <Orders id={b} />
+  if (a === 'scan') return <Scanner />
+  if (a === 'notify') return <NotifySettings />
   if (a === 'leads') return <Leads />
   if (a === 'newsletter') return <Newsletter />
   if (a === 'ads') return <Ads sub={b} />
@@ -419,6 +440,8 @@ function App() {
       return
     }
     setDenied(false)
+    // skaner nie potrzebuje treści strony (i nie ma do nich dostępu)
+    if (p.role === 'scanner') return setMe(p as Profile)
     await boot(p as Profile).catch(fail)
   }
   useEffect(() => {
@@ -444,6 +467,7 @@ function App() {
       </div>
     )
   if (!me) return <Login onDone={load} />
+  if (me.role === 'scanner') return <Scanner standalone />
   if (!ready) return <Spinner label="Wczytuję treści…" />
   return (
     <>

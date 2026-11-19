@@ -3,7 +3,7 @@ import { copyFileSync, readdirSync, statSync, writeFileSync, existsSync } from '
 import { join } from 'node:path'
 
 const dist = 'dist'
-const site = (process.env.SITE_URL || 'https://beauty.barabashflow.pl').replace(/\/$/, '')
+const site = (process.env.SITE_URL || 'https://ohtargi.pl').replace(/\/$/, '')
 const base = (process.env.BASE_PATH || '/').replace(/\/?$/, '/')
 
 if (existsSync(join(dist, '404/index.html'))) copyFileSync(join(dist, '404/index.html'), join(dist, '404.html'))
@@ -16,7 +16,7 @@ const walk = (dir) => {
     if (statSync(p).isDirectory()) walk(p)
     else if (f === 'index.html') {
       const rel = p.slice(dist.length + 1).replace(/index\.html$/, '')
-      if (!rel.startsWith('404') && !rel.startsWith('admin')) urls.push(`${site}${base}${rel}`)
+      if (!rel.startsWith('404') && !rel.startsWith('admin') && !/^(en\/)?(bilet|ticket)\//.test(rel)) urls.push(`${site}${base}${rel}`)
     }
   }
 }
@@ -26,5 +26,5 @@ writeFileSync(
   join(dist, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n')}\n</urlset>\n`,
 )
-writeFileSync(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: ${base}admin/\nSitemap: ${site}${base}sitemap.xml\n`)
+writeFileSync(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: ${base}admin/\nDisallow: ${base}bilet/\nDisallow: ${base}en/ticket/\nSitemap: ${site}${base}sitemap.xml\n`)
 console.log(`postbuild: ${urls.length} urls in sitemap, 404.html ready`)

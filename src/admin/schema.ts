@@ -237,11 +237,11 @@ export const COLLECTIONS: Record<string, Collection> = {
     key: 'tickets', title: 'Bilety', one: 'bilet', kind: 'list', desc: 'Rodzaje biletów, ceny, limity i terminy sprzedaży. Kolejność = kolejność na stronie.',
     name: (x) => x.name?.pl,
     cols: [{ label: 'Bilet', get: (x) => x.name?.pl }, { label: 'Cena', get: (x) => zl(x.price), w: '90px' }, { label: 'Dni', get: (x) => x.days, w: '60px' }, { label: 'Limit', get: (x) => x.limit || '—', w: '80px' }, { label: 'Sprzedaż', get: (x) => (x.saleFrom || x.saleTo ? `${x.saleFrom ?? '…'} → ${x.saleTo ?? '…'}` : 'bez ograniczeń') }, { label: 'Aktywny', get: (x) => x.active !== false, w: '80px' }],
-    make: () => ({ id: `bilet-${Math.random().toString(36).slice(2, 6)}`, name: TT('Nowy bilet', 'New ticket'), price: 0, note: T0(), perks: [], days: 1, active: true }),
+    make: () => ({ id: `bilet-${Math.random().toString(36).slice(2, 6)}`, name: TT('Nowy bilet', 'New ticket'), price: 0, note: T0(), perks: [], days: 1, active: true, reentry: true }),
     fields: [
       { name: 'name', label: 'Nazwa', type: 't', half: true }, { name: 'note', label: 'Dopisek pod nazwą', type: 't', half: true },
       { name: 'price', label: 'Cena (zł)', type: 'num', half: true }, { name: 'days', label: 'Ważność', type: 'select', half: true, options: [{ value: 1, label: '1 dzień (kupujący wybiera dzień)' }, { value: 2, label: 'Oba dni' }] },
-      { name: 'cateringIncluded', label: 'Catering w cenie', type: 'bool', half: true }, { name: 'featured', label: 'Wyróżniony („Najczęściej wybierany”)', type: 'bool', half: true },
+      { name: 'cateringIncluded', label: 'Catering w cenie', type: 'bool', half: true }, { name: 'reentry', label: 'Ponowne wejście tego samego dnia (skaner wpuści drugi raz)', type: 'bool', half: true }, { name: 'featured', label: 'Wyróżniony („Najczęściej wybierany”)', type: 'bool', half: true },
       { name: 'perks', label: 'Co zawiera', type: 'list', plainT: true, make: T0 },
       { name: 'limit', label: 'Limit sztuk (0 = bez limitu)', type: 'num', half: true, help: 'Będzie pilnowany po podłączeniu płatności.' }, { name: 'active', label: 'Widoczny na stronie', type: 'bool', half: true },
       { name: 'saleFrom', label: 'Sprzedaż od', type: 'date', half: true }, { name: 'saleTo', label: 'Sprzedaż do', type: 'date', half: true },
@@ -341,7 +341,7 @@ export const COLLECTIONS: Record<string, Collection> = {
     key: 'settings', title: 'Ustawienia strony', one: 'ustawienia', kind: 'single', desc: 'Logo, obraz do udostępnień, media społecznościowe. Kolory i kroje pisma są stałe — pilnują spójności marki.',
     fields: [
       { name: 'logoText', label: 'Logo — napis', type: 'str', half: true }, { name: 'logoSub', label: 'Logo — dopisek', type: 'str', half: true },
-      { name: 'logoImg', label: 'Logo — plik (zastępuje napis na stronie głównej)', type: 'img', help: 'Najlepiej PNG z przezroczystym tłem lub SVG.' }, { name: 'ogImage', label: 'Obraz przy udostępnianiu linku (Facebook, Messenger…)', type: 'img' },
+      { name: 'logoImg', label: 'Logo — plik (zastępuje napis na stronie głównej)', type: 'img', help: 'Najlepiej PNG z przezroczystym tłem lub SVG.' }, { name: 'ogImage', label: 'Obraz przy udostępnianiu linku (Facebook, Messenger…)', type: 'img', help: 'Puste = gotowa grafika ohtargi.pl (1200 × 630).' },
       { name: 'social', label: 'Media społecznościowe', type: 'list', title: (x) => x.name, make: () => ({ name: 'Instagram', url: 'https://' }), fields: [{ name: 'name', label: 'Nazwa', type: 'str', half: true }, { name: 'url', label: 'Adres profilu', type: 'str', half: true }] },
       { name: 'footerNote', label: 'Dopisek w stopce', type: 't', help: 'Np. informacja, że strona jest wersją roboczą. Zostaw puste, aby ukryć.' },
       { name: 'partnerStrip', label: 'Pasek partnerów na dole każdej strony', type: 'bool', half: true }, { name: 'tracking', label: 'Licznik odwiedzin (bez cookies)', type: 'bool', half: true },

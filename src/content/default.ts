@@ -446,6 +446,7 @@ export const DEFAULT: SiteData = {
       price: 79,
       note: T2('sobota lub niedziela', 'Saturday or Sunday'),
       days: 1,
+      reentry: true,
       active: true,
       perks: [
         T2('Wstęp na halę wystawców', 'Access to the exhibition hall'),
@@ -460,6 +461,7 @@ export const DEFAULT: SiteData = {
       price: 129,
       note: T2('oba dni targów', 'both days'),
       days: 2,
+      reentry: true,
       active: true,
       featured: true,
       perks: [
@@ -475,6 +477,7 @@ export const DEFAULT: SiteData = {
       price: 349,
       note: T2('oba dni + strefa VIP', 'both days + VIP lounge'),
       days: 2,
+      reentry: true,
       active: true,
       cateringIncluded: true,
       perks: [
@@ -621,7 +624,7 @@ export const DEFAULT: SiteData = {
     logoText: 'Beauty & Hair',
     logoSub: 'Expo · Rzeszów 2028',
     logoImg: '',
-    ogImage: 'mc-team',
+    ogImage: '',
     social: [
       { name: 'Instagram', url: 'https://instagram.com/' },
       { name: 'Facebook', url: 'https://facebook.com/' },

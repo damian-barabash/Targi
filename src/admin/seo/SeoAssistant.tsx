@@ -207,7 +207,7 @@ export default function SeoAssistant({ base }: { base: string }) {
 
   const setKeyword = (v: string) => set(`${base}.keyword`, { ...(post.keyword ?? { pl: '', en: '' }), [loc]: v })
   const newsSlug = site.pages.find((p) => p.id === 'news')?.slug?.[loc] ?? 'aktualnosci'
-  const host = typeof location !== 'undefined' ? location.host : 'beauty.barabashflow.pl'
+  const host = 'ohtargi.pl'
   const cutTitle = input.title.length > 60 ? `${input.title.slice(0, 58).trimEnd()}…` : input.title
   const cutDesc = input.excerpt.length > 158 ? `${input.excerpt.slice(0, 155).trimEnd()}…` : input.excerpt
 

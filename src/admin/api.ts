@@ -7,7 +7,7 @@ const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string
 export const db = createClient(SUPA_URL, KEY, { auth: { storageKey: 'bhe-admin', persistSession: true, autoRefreshToken: true } })
 export const STORAGE = `${SUPA_URL}/storage/v1/object/public/media`
 
-export type Role = 'admin' | 'exhibitors' | 'tickets' | 'marketing' | 'reports'
+export type Role = 'admin' | 'exhibitors' | 'tickets' | 'marketing' | 'reports' | 'sales' | 'scanner'
 export type Profile = { id: string; email: string; name: string; role: Role; active: boolean; created_at: string; last_seen_at: string | null }
 
 export const ROLE_LABEL: Record<Role, string> = {
@@ -16,6 +16,8 @@ export const ROLE_LABEL: Record<Role, string> = {
   tickets: 'Bilety',
   marketing: 'Marketing',
   reports: 'Raporty (podgląd)',
+  sales: 'Sprzedawca (CRM)',
+  scanner: 'Skaner biletów',
 }
 export const ROLE_HELP: Record<Role, string> = {
   admin: 'Pełny dostęp: treści, bilety, użytkownicy, publikacja i przywracanie wersji.',
@@ -23,6 +25,8 @@ export const ROLE_HELP: Record<Role, string> = {
   tickets: 'Edycje, dane wydarzenia, bilety, catering, kody rabatowe i masterclass.',
   marketing: 'Strony, aktualności, FAQ, banery, media, newsletter, program i eksperci.',
   reports: 'Tylko podgląd pulpitu, statystyk i list — bez edycji.',
+  sales: 'Tylko CRM: osoby, firmy, rozmowy, notatki i zadania „oddzwonić”. Bez dostępu do treści strony i ustawień.',
+  scanner: 'Tylko skaner biletów przy wejściu (telefon). Po zalogowaniu od razu widzi kamerę, nic więcej.',
 }
 
 /** Wywołanie funkcji Edge; zwraca dane albo rzuca błąd z czytelnym komunikatem. */

@@ -6,6 +6,7 @@ import { S } from './content/site'
 import { pageHref, postHref, zoneHref } from './lib/link'
 import PageView from './blocks/PageView'
 import { NotFound, PostPage, ZonePage } from './pages/Pages'
+import TicketPage from './pages/TicketPage'
 
 type Page = { path: (l: Locale) => string; el: ReactElement; plain?: boolean }
 
@@ -28,6 +29,8 @@ const site: RouteRecord[] = LOCALES.map((l) => {
         const rel = p.path(l).slice(root.length).replace(/^\//, '')
         return rel ? { path: rel, element: p.el, handle } : { index: true as const, element: p.el, handle }
       }),
+      // bilet online z kodem QR (link z e-maila i z kodu QR)
+      { path: l === 'pl' ? 'bilet' : 'ticket', element: <TicketPage />, handle: { alt: { pl: '/bilet', en: '/en/ticket' }, plain: true } },
       // 404: '404' generuje plik (kopiowany do dist/404.html dla GitHub Pages), '*' łapie resztę w przeglądarce
       ...(l === 'pl' ? [{ path: '404', element: <NotFound />, handle: { alt: { pl: '/', en: '/en' }, plain: true } }] : []),
       { path: '*', element: <NotFound />, handle: { alt: { pl: '/', en: '/en' }, plain: true } },

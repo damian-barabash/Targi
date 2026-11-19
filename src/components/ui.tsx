@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Head } from 'vite-react-ssg'
 import type { Locale } from '../i18n'
 import { imgSet, imgSrc } from '../lib/img'
@@ -7,6 +7,9 @@ import { link } from '../lib/link'
 import { trackAd } from '../lib/track'
 import { RT, S } from '../content/site'
 import type { Banner } from '../content/types'
+
+const BASE_URL = import.meta.env.BASE_URL
+const SITE_URL = ((import.meta.env.VITE_SITE_URL as string | undefined) || 'https://ohtargi.pl').replace(/\/$/, '')
 import { E, Im, useEdit } from '../blocks/edit'
 
 export const LocaleCtx = createContext<Locale>('pl')
@@ -140,7 +143,10 @@ export function Eyebrow({ children }: { children: ReactNode; light?: boolean }) 
 export function Seo({ title, description, image }: { title: string; description: string; image?: string }) {
   const l = useLocale()
   const full = title.includes(S.event.brand) ? title : `${title} · ${S.event.brand}`
-  image ||= S.settings.ogImage || 'mc-team'
+  const { pathname } = useLocation()
+  const src = image ? imgSrc(image, 1600) : S.settings.ogImage ? imgSrc(S.settings.ogImage, 1600) : `${BASE_URL}og.png`
+  const page = pathname === '/' || pathname.endsWith('/') ? pathname : `${pathname}/`
+  const abs = (u: string) => (/^https?:/.test(u) ? u : `${SITE_URL}${u.startsWith('/') ? '' : '/'}${u}`)
   return (
     <Head>
       <html lang={l} />
@@ -149,7 +155,10 @@ export function Seo({ title, description, image }: { title: string; description:
       <meta property="og:title" content={full} />
       <meta property="og:description" content={description} />
       <meta property="og:type" content="website" />
-      <meta property="og:image" content={imgSrc(image, 1600)} />
+      <meta property="og:image" content={abs(src)} />
+      <meta property="og:url" content={abs(page)} />
+      <meta property="og:site_name" content={S.event.brand} />
+      <link rel="canonical" href={abs(page)} />
       <meta property="og:locale" content={l === 'pl' ? 'pl_PL' : 'en_GB'} />
       <meta name="twitter:card" content="summary_large_image" />
     </Head>
