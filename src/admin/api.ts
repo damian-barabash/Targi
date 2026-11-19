@@ -42,6 +42,36 @@ export async function fn<R = any>(name: string, body: unknown): Promise<R> {
   return data as R
 }
 
+/** Funkcja Edge odpowiadająca strumieniem tekstu (AI). onText dostaje cały dotychczasowy tekst. */
+export async function fnStream(name: string, body: unknown, onText: (all: string) => void, signal?: AbortSignal): Promise<string> {
+  const { data } = await db.auth.getSession()
+  const res = await fetch(`${SUPA_URL}/functions/v1/${name}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${data.session?.access_token ?? KEY}`, apikey: KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    signal,
+  })
+  if (!res.ok || !res.body) {
+    let msg = `HTTP ${res.status}`
+    try {
+      msg = (await res.json()).error ?? msg
+    } catch {
+      /* brak treści */
+    }
+    throw new Error(msg)
+  }
+  const reader = res.body.getReader()
+  const dec = new TextDecoder()
+  let all = ''
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    all += dec.decode(value, { stream: true })
+    onText(all)
+  }
+  return all
+}
+
 export async function rpc<R = any>(name: string, args?: Record<string, unknown>): Promise<R> {
   const { data, error } = await db.rpc(name, args)
   if (error) throw Object.assign(new Error(error.message), { code: error.code })

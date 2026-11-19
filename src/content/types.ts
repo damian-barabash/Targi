@@ -44,7 +44,7 @@ export type ProgramItem = { time: string; title: T; stage: T; host?: string; zon
 export type ProgramDay = { day: T; date: string; items: ProgramItem[] }
 export type Exhibitor = { name: string; category: T; stand: string; zone: string; logo?: string; url?: string; desc?: T }
 export type PartnerTier = { tier: T; items: { name: string; logo?: string; url?: string }[] }
-export type Post = { slug: string; title: T; date: string; img: string; excerpt: T; body: T; draft?: boolean }
+export type Post = { slug: string; title: T; date: string; img: string; excerpt: T; body: T; draft?: boolean; /** fraza kluczowa (tylko do oceny SEO w panelu) */ keyword?: T }
 export type Faq = { q: T; a: T }
 export type Stat = { value: string; label: T }
 

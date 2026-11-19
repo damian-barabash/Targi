@@ -69,6 +69,17 @@ const P: Record<string, string> = {
   info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.010',
   filter: 'M4 6h16l-6 7v5l-4 2v-7z',
   bolt: 'M13 3L5 14h6l-1 7 8-11h-6z',
+  sparkle: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z',
+  wand: 'M4 20L15 9M13 7l2-2 4 4-2 2zM6 3v3M4.5 4.5h3M19 15v3M17.5 16.5h3M10 3l.5 1.5L12 5l-1.5.5L10 7l-.5-1.5L8 5l1.5-.5z',
+  target: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z',
+  call: 'M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z',
+  building: 'M4 21V5l8-2v18M12 8h8v13M3 21h18M7 8h2M7 12h2M7 16h2M15 12h2M15 16h2',
+  clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+  tag: 'M3 12V4h8l10 10-8 8zM7.500 8a.500.500 0 1 0 .010 0',
+  note: 'M5 4h14v11l-5 5H5zM14 20v-5h5M8 9h8M8 13h5',
+  merge: 'M6 4v4a6 6 0 0 0 6 6h6M15 11l3 3-3 3M6 20v-6',
+  userplus: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3 3-5 6-5s6 2 6 5M19 8v6M16 11h6',
+  crm: 'M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2.500 20c0-3 2.500-5 5.500-5s5.500 2 5.500 5M14 5h7M14 9h7M16 13h5',
 }
 export function Icon({ n, s = 18, className = '' }: { n: string; s?: number; className?: string }) {
   return (
@@ -136,7 +147,7 @@ export const Spinner = ({ label = 'Wczytywanie…' }: { label?: string }) => (
 )
 
 /* ───────── okna ───────── */
-export function Modal({ title, onClose, children, footer, wide, side }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; side?: boolean }) {
+export function Modal({ title, onClose, children, footer, wide, side, aside, className = '' }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; side?: boolean; aside?: ReactNode; className?: string }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
@@ -144,7 +155,8 @@ export function Modal({ title, onClose, children, footer, wide, side }: { title:
   }, [onClose])
   return (
     <div className={`ov ${side ? 'ov--side' : ''}`} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className={`modal ${wide ? 'modal--wide' : ''} ${side ? 'modal--side' : ''}`} role="dialog" aria-modal="true">
+      {aside}
+      <div className={`modal ${wide ? 'modal--wide' : ''} ${side ? 'modal--side' : ''} ${className}`} role="dialog" aria-modal="true">
         <header className="modal__head">
           <h2>{title}</h2>
           <Btn icon="x" kind="plain" title="Zamknij" onClick={onClose} />

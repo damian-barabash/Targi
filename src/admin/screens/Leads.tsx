@@ -6,7 +6,7 @@ import { Badge, Btn, Card, Empty, Icon, Modal, PageHead, Spinner, Tabs, ask } fr
 
 export type Lead = {
   id: string; created_at: string; kind: string; locale: string; name: string; email: string; phone: string | null; company: string | null
-  topic: string | null; message: string | null; details: Record<string, string>; status: string; source_path: string | null; notes: string | null; assigned_to: string | null; updated_at: string | null
+  topic: string | null; message: string | null; details: Record<string, string>; status: string; source_path: string | null; notes: string | null; assigned_to: string | null; updated_at: string | null; contact_id: string | null
 }
 export const KIND: Record<string, string> = { exhibitor: 'Wystawca', partner: 'Partner / reklama', media: 'Media', contact: 'Kontakt' }
 export const STATUS: Record<string, [string, 'gold' | 'blue' | 'green' | 'red' | 'gray']> = {
@@ -158,6 +158,12 @@ export default function Leads() {
                 </Btn>
               )}
               <span className="grow" />
+              {open.contact_id && (
+                <a className="ab" href={`#/crm/o/${open.contact_id}`}>
+                  <Icon n="crm" s={17} />
+                  <span>Karta klienta</span>
+                </a>
+              )}
               <a className="ab ab--primary" href={`mailto:${open.email}?subject=${encodeURIComponent('Beauty & Hair Expo')}`}>
                 <Icon n="mail" s={17} />
                 <span>Odpisz e-mailem</span>

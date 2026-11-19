@@ -7,6 +7,7 @@ import { FieldForm } from '../fields'
 import { thumb } from '../media'
 import { Badge, Btn, Card, Empty, Icon, Modal, PageHead, ask } from '../ui'
 import { go, subTabs } from '../entry'
+import SeoAssistant from '../seo/SeoAssistant'
 
 export function SubTabs({ route }: { route: string }) {
   const tabs = subTabs(route)
@@ -184,6 +185,7 @@ export default function CollectionScreen({ id, index }: { id: string; index?: st
           side
           title={def.name?.(items[open]) || def.title}
           onClose={() => go(`c/${id}`)}
+          aside={id === 'posts' ? <SeoAssistant base={`posts.${open}`} /> : undefined}
           footer={
             <>
               <span className="muted-t grow">Zmiany zapisują się w wersji roboczej po kliknięciu „Zapisz” u góry.</span>

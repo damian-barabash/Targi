@@ -1,5 +1,5 @@
 // Wspólne: CORS + sprawdzenie, kim jest wywołujący (rola z tabeli profiles).
-import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2'
+import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0'
 
 export const cors = {
   'Access-Control-Allow-Origin': '*',

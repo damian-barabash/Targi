@@ -1,7 +1,7 @@
 // Panel administracyjny: logowanie, menu, górny pasek (zapis / publikacja), ekrany.
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import './admin.css'
-import { db, ROLE_LABEL, type Profile } from './api'
+import { db, ROLE_LABEL, rpc, type Profile } from './api'
 import { boot, canEdit, discard, fail, get, loadContent, publish, save, setLoc, setMe, signOut, toast, useStore } from './store'
 import { AskHost, Btn, Icon, Modal, Spinner, Toasts, ask } from './ui'
 import { MediaPickerHost } from './media'
@@ -15,6 +15,7 @@ import Leads from './screens/Leads'
 import Newsletter from './screens/Newsletter'
 import Ads from './screens/Ads'
 import Visits from './screens/Visits'
+import CrmScreen from './crm/Crm'
 import { Editions, History, NavScreen, PublishScreen, Users } from './screens/System'
 
 /* ───────── prosty router po # (jedna statyczna strona /admin/) ───────── */
@@ -64,6 +65,7 @@ const MENU: { title?: string; items: Item[] }[] = [
   {
     title: 'Sprzedaż i marketing',
     items: [
+      { to: 'crm', label: 'Klienci (CRM)', icon: 'crm' },
       { to: 'leads', label: 'Zgłoszenia', icon: 'inbox' },
       { to: 'newsletter', label: 'Newsletter', icon: 'send' },
       { to: 'ads', label: 'Reklama', icon: 'ad' },
@@ -243,6 +245,7 @@ function Shell({ route, children }: { route: string[]; children: ReactNode }) {
   const [open, setOpen] = useState(false)
   const [pub, setPub] = useState(false)
   const [newLeads, setNewLeads] = useState(0)
+  const [crmDue, setCrmDue] = useState(0)
   const path = route.join('/')
   const active = (to: string) => (to === '' ? path === '' : path === to || path.startsWith(`${to}/`) || (subTabs(path)?.[0].to === to && subTabs(path)?.some((x) => x.to === path)))
 
@@ -253,6 +256,11 @@ function Shell({ route, children }: { route: string[]; children: ReactNode }) {
       .eq('status', 'new')
       .then(({ count }) => setNewLeads(count ?? 0))
   }, [path === 'leads'])
+  useEffect(() => {
+    rpc<{ mineDue: number } | null>('crm_counts')
+      .then((n) => setCrmDue(n?.mineDue ?? 0))
+      .catch(() => {})
+  }, [route[0]])
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
@@ -299,6 +307,7 @@ function Shell({ route, children }: { route: string[]; children: ReactNode }) {
                     <Icon n={x.icon} />
                     <span>{x.label}</span>
                     {x.to === 'leads' && newLeads > 0 && <em>{newLeads}</em>}
+                    {x.to === 'crm' && crmDue > 0 && <em title="Twoje zadania na dziś i zaległe">{crmDue}</em>}
                   </a>
                 ))}
               </div>
@@ -371,6 +380,7 @@ function Screen({ route }: { route: string[] }) {
   if (a === 'pages') return <PagesList />
   if (a === 'c' && COLLECTIONS[b]) return <CollectionScreen key={b} id={b} index={c} />
   if (a === 'media') return <MediaScreen />
+  if (a === 'crm') return <CrmScreen sub={b} id={c} />
   if (a === 'leads') return <Leads />
   if (a === 'newsletter') return <Newsletter />
   if (a === 'ads') return <Ads sub={b} />

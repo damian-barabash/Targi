@@ -15,3 +15,4 @@ assets/photos/*.jpg
 .old
 src/content/published.json
 public/m
+supabase/.temp/
