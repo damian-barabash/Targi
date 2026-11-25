@@ -45,7 +45,7 @@ for (const id of ids)
   for (const w of [800, 1600, 2400]) {
     const out = `public/m/${id}-${w}.webp`
     if (existsSync(out)) continue
-    const res = await fetch(`${URL}/storage/v1/object/public/m/${id}-${w}.webp`)
+    const res = await fetch(`${URL}/storage/v1/object/public/media/${id}-${w}.webp`)
     if (!res.ok) {
       console.warn(`content: brak pliku ${id}-${w}.webp (${res.status})`)
       continue
