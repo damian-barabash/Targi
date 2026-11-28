@@ -81,29 +81,36 @@ export function Img({
   )
 }
 
+/** Jeden wspólny obserwator dla wszystkich elementów Reveal (zamiast osobnego na każdy). */
+let revealIO: IntersectionObserver | null = null
+function observeReveal(el: HTMLElement) {
+  revealIO ??= new IntersectionObserver(
+    (entries) => {
+      for (const e of entries)
+        if (e.isIntersecting) {
+          e.target.classList.add('reveal--in')
+          revealIO!.unobserve(e.target)
+        }
+    },
+    { rootMargin: '0px 0px -8% 0px' },
+  )
+  revealIO.observe(el)
+  return () => revealIO?.unobserve(el)
+}
+
 /** Delikatne pojawianie się przy przewijaniu. Bez JS treść jest widoczna. */
-export function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }: { children: ReactNode; className?: string; delay?: number; as?: 'div' | 'section' | 'li' | 'article' }) {
+export function Reveal({ children, className = '', delay = 0, as: Tag = 'div', style }: { children: ReactNode; className?: string; delay?: number; as?: 'div' | 'section' | 'li' | 'article'; style?: React.CSSProperties }) {
   const ref = useRef<HTMLElement>(null)
   useEffect(() => {
     const el = ref.current
     if (!el || !('IntersectionObserver' in window)) return
     if (el.getBoundingClientRect().top < window.innerHeight * 0.92) return
     el.classList.add('reveal--wait')
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          el.classList.add('reveal--in')
-          io.disconnect()
-        }
-      },
-      { rootMargin: '0px 0px -8% 0px' },
-    )
-    io.observe(el)
-    return () => io.disconnect()
+    return observeReveal(el)
   }, [])
   return (
     // @ts-expect-error polymorphic ref
-    <Tag ref={ref} className={`reveal ${className}`} style={delay ? { transitionDelay: `${delay}ms` } : undefined}>
+    <Tag ref={ref} className={`reveal ${className}`} style={delay || style ? { ...style, ...(delay ? { transitionDelay: `${delay}ms` } : null) } : undefined}>
       {children}
     </Tag>
   )

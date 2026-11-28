@@ -12,13 +12,18 @@ export function imgSrc(ref: string, w = 1600): string {
     return RT.preview ? `${RT.storage}/${id}-${w}.webp` : `${BASE}m/${id}-${w}.webp`
   }
   if (/^(https?:|data:|\/)/.test(ref)) return ref
+  // zdjęcia z niestandardowymi szerokościami: najbliższy istniejący plik
+  const ws = LEGACY_WIDE[ref]
+  if (ws && !ws.includes(w)) w = ws.find((x) => x >= w) ?? ws[ws.length - 1]
   return `${BASE}img/${ref}-${w}.webp`
 }
 
 export function imgWidths(ref: string, wide = false): number[] {
   if (ref.startsWith('media:')) return wide ? [800, 1600, 2400] : [800, 1600]
   if (/^(https?:|data:|\/)/.test(ref)) return []
-  return (wide && LEGACY_WIDE[ref]) || [800, 1600]
+  const legacy = LEGACY_WIDE[ref]
+  if (legacy) return wide ? legacy : legacy.filter((x) => x <= 1600)
+  return [800, 1600]
 }
 
 export function imgSet(ref: string, wide = false): string | undefined {
@@ -34,6 +39,17 @@ const BUILTIN_FOCUS: Record<string, [number, number]> = {
   'z-cosmetology': [40, 50],
   'z-barber': [60, 35],
 }
+
+/** Proporcje wbudowanych grafik kampanii (żeby miejsce było zarezerwowane przed wczytaniem). */
+const BUILTIN_AR: Record<string, number> = {
+  'promo-spotkajmy': 2000 / 667,
+  'promo-partner': 2000 / 667,
+  'promo-wystawca': 2000 / 667,
+  'promo-zarezerwuj': 1122 / 1402,
+  'promo-ambasador': 1122 / 1402,
+  'promo-stoisko': 1122 / 1402,
+}
+export const builtinAr = (ref: string) => BUILTIN_AR[ref] ?? 0
 
 /** Dane pliku: punkt kadru, proporcja i rodzaj (zdjęcie / logo). */
 export function imgMeta(ref: string): { x: number; y: number; ar: number; logo: boolean } | null {

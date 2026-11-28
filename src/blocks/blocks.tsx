@@ -11,7 +11,7 @@ import { link, pageHref, postHref, zoneHref } from '../lib/link'
 import { AdSlot, Arrow, BannerSlot, Btn, Countdown, More, Reveal, bannersFor, useLocale } from '../components/ui'
 import { LeadForm, NewsletterForm, leadFields, type LeadKind } from '../components/forms'
 import { E, Im, Paras, rich, useEdit } from './edit'
-import { imgSet } from '../lib/img'
+import { builtinAr, imgMeta, imgSet } from '../lib/img'
 import TicketShop from './TicketShop'
 
 export type BP = { at: string; p: Record<string, any> }
@@ -361,24 +361,38 @@ function Zones({ at, p }: BP) {
     <section className="sec wrap">
       <Head at={at} p={p} />
       <div className="zones">
-        {S.zones.map((z, i) => (
-          <Reveal key={z.short} delay={i * 50}>
-            <Link to={zoneHref(l, z)} className="zone">
-              <div className="zone__media">
-                <Im at={`zones.${i}.img`} sizes="(max-width: 800px) 50vw, 20vw" alt={t(z.name, l)} />
-              </div>
-              <span className="zone__n">{String(i + 1).padStart(2, '0')}</span>
-              <div className="zone__cap">
-                <E at={`zones.${i}.name`} className="zone__name" />
-                {z.partner && (
-                  <span className="zone__meta">
-                    {l === 'pl' ? 'partner strefy' : 'zone partner'}: {z.partner}
+        {S.zones.map((z, i) => {
+          const name = t(z.name, l)
+          const word = name.replace(/^(Strefa|Zone)\s+/i, '').replace(/\s+(Zone|Strefa)$/i, '')
+          return (
+            <Reveal key={z.short} delay={i * 50}>
+              <Link to={zoneHref(l, z)} className={`zone ${z.img ? 'zone--img' : 'zone--type'} ${i % 2 ? 'zone--dark' : ''}`}>
+                {z.img && (
+                  <span className="zone__media">
+                    <Im at={`zones.${i}.img`} sizes="(max-width: 800px) 50vw, 20vw" alt={name} />
                   </span>
                 )}
-              </div>
-            </Link>
-          </Reveal>
-        ))}
+                <span className="zone__top">
+                  <span className="ohmark">
+                    oh<b>!</b>targi.pl
+                  </span>
+                  <span className="zone__n">{String(i + 1).padStart(2, '0')}</span>
+                </span>
+                <span className="zone__body">
+                  <span className="zone__k">{l === 'pl' ? 'Strefa' : 'Zone'}</span>
+                  <span className="zone__name">{word}</span>
+                  <span className="rule" aria-hidden="true" />
+                </span>
+                {z.partner && (
+                  <span className="zone__meta">
+                    {l === 'pl' ? 'partner strefy' : 'zone partner'}
+                    <b>{z.partner}</b>
+                  </span>
+                )}
+              </Link>
+            </Reveal>
+          )
+        })}
       </div>
     </section>
   )
@@ -967,7 +981,7 @@ function Promo({ at, p }: BP) {
     <section className={`promo wrap promo--${Math.min(items.length, 3)}`}>
       {has(p.heading, l) && <h1 className="sr-only">{t(p.heading, l)}</h1>}
       {items.map((x, i) => (
-        <Reveal key={i} delay={i * 70} className="promo__item">
+        <Reveal key={i} delay={i * 70} className="promo__item" style={{ '--ar': builtinAr(x.img) || imgMeta(x.img ?? '')?.ar || undefined, '--arm': builtinAr(x.imgMobile) || imgMeta(x.imgMobile ?? '')?.ar || undefined } as CSSProperties}>
           <Go to={ed ? '' : link(l, x.link)} className="promo__link" label={t(x.alt, l) || undefined}>
             <picture>
               {!ed && x.imgMobile && <source media="(max-width: 700px)" srcSet={imgSet(x.imgMobile, true)} sizes="100vw" />}

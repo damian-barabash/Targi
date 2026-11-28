@@ -1,7 +1,6 @@
 // Bilet online (/bilet/?k=KOD): kod QR do pokazania przy wejściu + dane biletu. Strona nieindeksowana.
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Head } from 'vite-react-ssg'
-import qrcode from 'qrcode-generator'
 import { S } from '../content/site'
 import { useLocale } from '../components/ui'
 import { rpcPublic } from '../lib/supabase'
@@ -10,16 +9,25 @@ import './ticket.css'
 type T = { code: string; type: string; holder: string; dates: string[]; catering: boolean; status: 'valid' | 'cancelled'; order: string }
 const SITE = 'https://ohtargi.pl'
 
+/** Kod QR rysowany w przeglądarce; biblioteka ładowana tylko na tej stronie (nie w paczce całej witryny). */
 function QR({ text }: { text: string }) {
-  const svg = useMemo(() => {
-    const q = qrcode(0, 'M')
-    q.addData(text)
-    q.make()
-    const n = q.getModuleCount()
-    let d = ''
-    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c + 4} ${r + 4}h1v1h-1z`
-    return { d, size: n + 8 }
+  const [svg, setSvg] = useState<{ d: string; size: number } | null>(null)
+  useEffect(() => {
+    let on = true
+    import('qrcode-generator').then(({ default: qrcode }) => {
+      const q = qrcode(0, 'M')
+      q.addData(text)
+      q.make()
+      const n = q.getModuleCount()
+      let d = ''
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c + 4} ${r + 4}h1v1h-1z`
+      if (on) setSvg({ d, size: n + 8 })
+    })
+    return () => {
+      on = false
+    }
   }, [text])
+  if (!svg) return <div className="tk__qr" aria-busy="true" />
   return (
     <svg className="tk__qr" viewBox={`0 0 ${svg.size} ${svg.size}`} shapeRendering="crispEdges" role="img" aria-label="QR">
       <rect width={svg.size} height={svg.size} fill="#fff" />

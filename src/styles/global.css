@@ -288,9 +288,8 @@ em {
 }
 .hdr--solid,
 .hdr--open {
-  background: rgba(244, 240, 234, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* bez backdrop-filter: rozmycie pod przyklejonym nagłówkiem przeliczało się przy każdym przewinięciu */
+  background: rgba(248, 240, 234, 0.97);
   border-bottom-color: var(--line);
 }
 .hdr__bar {
@@ -2526,7 +2525,9 @@ html.lenis body {
   --gold: var(--pink);
   --gold-soft: var(--pink-soft);
   --gold-d: var(--pink-d);
-  --display: 'Playfair Display Variable', 'Playfair Display', 'Newsreader Variable', Georgia, serif;
+  --display: 'Playfair Display Variable', 'Playfair Display', Georgia, serif;
+  /* jeden szeryf na całej stronie (Newsreader usunięty: −530 KB fontów) */
+  --serif: var(--display);
   --peach-grad: linear-gradient(100deg, #fdf5f0 0%, #f8e9e2 48%, #eedbd1 100%);
 }
 ::selection {
@@ -3806,4 +3807,185 @@ a.poster:hover {
 .hdr__cta {
   font-size: 16px !important;
   min-height: 38px;
+}
+
+
+/* ═════════ WYDAJNOŚĆ (2026-11-28) ═════════ */
+/* odsłanianie kadrów: tylko opacity + transform (kompozytor), bez clip-path */
+.js .tile__media,
+.js .split2__media,
+.js .feed__tile,
+.js .phero__media {
+  clip-path: none;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+.js .tile__media.is-in,
+.js .split2__media.is-in,
+.js .feed__tile.is-in,
+.js .phero__media.is-in {
+  opacity: 1;
+  transform: none;
+}
+.pfx {
+  will-change: auto;
+  transform: none;
+}
+/* paralaksa liczona przez kompozytor (Chrome, Edge, Safari 26+); gdzie brak wsparcia — zdjęcie stoi */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
+    .pband__media img,
+    .phero__media img {
+      scale: 1.1;
+      animation: plx linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+  }
+}
+@keyframes plx {
+  from {
+    translate: 0 -4%;
+  }
+  to {
+    translate: 0 4%;
+  }
+}
+/* pętle animacji tylko na ekranie (klasę is-live ustawia Motion.tsx) */
+.lrun:not(.is-live) .lrun__track,
+.marq:not(.is-live) .marq__track {
+  animation-play-state: paused;
+}
+.lrun__track,
+.marq__track {
+  backface-visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .tile__media,
+  .js .split2__media,
+  .js .feed__tile,
+  .js .phero__media {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ───────── strefy: kwadratowe karty w stylu grafik marki (bez zdjęć) ───────── */
+.zone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  aspect-ratio: 1 / 1;
+  padding: clamp(14px, 1.4vw, 22px);
+  overflow: hidden;
+  text-align: left;
+  color: var(--ink);
+  background: radial-gradient(130% 90% at 100% 0%, #ead5ca 0%, transparent 55%), linear-gradient(160deg, #fdf5f0 0%, #f6e6de 60%, #efdcd2 100%);
+  box-shadow: inset 0 0 0 1px rgba(58, 34, 25, 0.06);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.zone--dark {
+  background: radial-gradient(120% 90% at 0% 0%, #6a4a3b 0%, var(--cocoa) 55%, #26150f 100%);
+  color: var(--cream);
+}
+.zone:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 0 0 0 1px rgba(224, 5, 75, 0.3), 0 22px 44px -28px rgba(58, 34, 25, 0.55);
+}
+.zone .zone__media {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+  border-radius: 0;
+  z-index: 0;
+}
+.zone .zone__media img {
+  -webkit-mask-image: linear-gradient(180deg, transparent 10%, #000 70%);
+  mask-image: linear-gradient(180deg, transparent 10%, #000 70%);
+}
+.zone > span:not(.zone__media) {
+  position: relative;
+  z-index: 1;
+}
+.zone__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.zone__top .ohmark {
+  font-size: 12px;
+}
+.zone .zone__n {
+  position: static;
+  transform: none;
+  padding: 0;
+  background: none;
+  color: var(--pink);
+  font-size: 13px;
+}
+.zone__body {
+  display: grid;
+  gap: 4px;
+}
+.zone__k {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(14px, 1.2vw, 18px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.zone .zone__name {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(26px, 2.6vw, 42px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--pink);
+  overflow-wrap: anywhere;
+}
+.zone--dark .zone__name {
+  color: #ff4f86;
+}
+.zone .rule {
+  width: 44px;
+  margin-top: 8px;
+}
+.zone .zone__meta {
+  display: grid;
+  gap: 2px;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: inherit;
+  opacity: 0.75;
+}
+.zone__meta b {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 1;
+}
+.zone:hover .zone__name {
+  color: var(--pink);
+}
+/* dwa plakaty obok siebie: rozsądna wielkość zamiast całej szerokości */
+.promo--2 {
+  max-width: 1120px;
+}
+/* miejsce na grafikę zarezerwowane z góry (bez skoków przy wczytywaniu) */
+.promo__item[style*='--ar'] .promo__link img {
+  aspect-ratio: var(--ar);
+  object-fit: contain;
+}
+@media (max-width: 700px) {
+  .promo__item[style*='--arm'] .promo__link img {
+    aspect-ratio: var(--arm);
+  }
 }
