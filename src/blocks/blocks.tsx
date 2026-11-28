@@ -965,12 +965,13 @@ function Promo({ at, p }: BP) {
   if (!items.length) return ed ? <Hidden what="Grafiki promocyjne" where="w tym bloku (pole „Grafiki”)" /> : null
   return (
     <section className={`promo wrap promo--${Math.min(items.length, 3)}`}>
+      {has(p.heading, l) && <h1 className="sr-only">{t(p.heading, l)}</h1>}
       {items.map((x, i) => (
         <Reveal key={i} delay={i * 70} className="promo__item">
           <Go to={ed ? '' : link(l, x.link)} className="promo__link" label={t(x.alt, l) || undefined}>
             <picture>
-              {!ed && x.imgMobile && <source media="(max-width: 700px)" srcSet={imgSet(x.imgMobile)} sizes="100vw" />}
-              <Im at={`${at}.items.${i}.img`} sizes={items.length > 1 ? '(max-width: 700px) 100vw, 50vw' : '100vw'} alt={t(x.alt, l)} />
+              {!ed && x.imgMobile && <source media="(max-width: 700px)" srcSet={imgSet(x.imgMobile, true)} sizes="100vw" />}
+              <Im at={`${at}.items.${i}.img`} sizes={items.length > 1 ? `(max-width: 700px) 100vw, ${Math.round(100 / items.length)}vw` : '100vw'} alt={t(x.alt, l)} wide eager={i === 0 && p.heading} />
             </picture>
           </Go>
         </Reveal>
@@ -1178,6 +1179,52 @@ function LogoRunBlock({ at, p }: BP) {
   )
 }
 
+
+/** Karty-plakaty w stylu grafik marki: brzoskwiniowe tło, szeryf w kursywie z różowym słowem, różowy przycisk. */
+function Posters({ at, p }: BP) {
+  const l = useLocale()
+  const ed = useEdit()
+  const items: any[] = p.items ?? []
+  if (!items.length) return ed ? <Hidden what="Karty w stylu marki" where="w tym bloku" /> : null
+  return (
+    <section className="sec wrap">
+      <Head at={at} p={p} />
+      <div className={`posters posters--${Math.min(items.length, 4)}`}>
+        {items.map((x, i) => (
+          <Reveal key={i} delay={i * 70}>
+            <Go to={ed ? '' : link(l, x.link)} className={`poster ${x.dark ? 'poster--dark' : ''} ${x.img ? 'poster--img' : ''}`}>
+              {(x.img || (ed && x.img !== undefined)) && (
+                <span className="poster__img">
+                  <Im at={`${at}.items.${i}.img`} sizes="(max-width: 700px) 100vw, 25vw" />
+                </span>
+              )}
+              <span className="poster__top">
+                <span className="ohmark">
+                  oh<b>!</b>targi.pl
+                </span>
+                <span className="poster__n">{String(i + 1).padStart(2, '0')}</span>
+              </span>
+              <span className="poster__body">
+                <span className="rule" aria-hidden="true" />
+                <E at={`${at}.items.${i}.title`} as="h3" className="poster__t" />
+                <E at={`${at}.items.${i}.text`} as="p" className="poster__x" />
+              </span>
+              <span className="poster__foot">
+                {(has(x.cta, l) || ed) && (
+                  <span className="btn btn--pink">
+                    <E at={`${at}.items.${i}.cta`} />
+                  </span>
+                )}
+                <E at={`${at}.items.${i}.meta`} className="poster__meta" />
+              </span>
+            </Go>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 /** Rejestr bloków: typ → komponent. Opisy pól do panelu są w src/admin/schema.ts. */
 export const BLOCKS: Record<string, ComponentType<BP>> = {
   hero: Hero,
@@ -1215,4 +1262,5 @@ export const BLOCKS: Record<string, ComponentType<BP>> = {
   social: Social,
   highlights: Highlights,
   logoRun: LogoRunBlock,
+  posters: Posters,
 }

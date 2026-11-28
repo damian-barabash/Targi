@@ -2,7 +2,7 @@ import { RT, S } from '../content/site'
 
 const BASE = import.meta.env.BASE_URL
 /** Starsze zdjęcia z niestandardowymi szerokościami. */
-const LEGACY_WIDE: Record<string, number[]> = { 'strip-show': [800, 1400, 2800] }
+const LEGACY_WIDE: Record<string, number[]> = { 'strip-show': [800, 1400, 2800], 'promo-spotkajmy': [800, 1600, 2000], 'promo-partner': [800, 1600, 2000], 'promo-wystawca': [800, 1600, 2000] }
 
 /** ref: nazwa z public/img, "media:<id>" z biblioteki mediów albo pełny adres. */
 export function imgSrc(ref: string, w = 1600): string {
@@ -28,14 +28,11 @@ export function imgSet(ref: string, wide = false): string | undefined {
 
 /** Punkty kadru wbudowanych zdjęć (x %, y %). */
 const BUILTIN_FOCUS: Record<string, [number, number]> = {
-  'harry-cut': [55, 28],
   'z-hair': [50, 30],
   'z-makeup': [45, 35],
   'z-nails': [50, 50],
   'z-cosmetology': [40, 50],
   'z-barber': [60, 35],
-  'hands-brushes': [45, 40],
-  'brushes-dark': [50, 35],
 }
 
 /** Dane pliku: punkt kadru, proporcja i rodzaj (zdjęcie / logo). */

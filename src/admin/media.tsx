@@ -21,7 +21,7 @@ export type MediaRow = {
 }
 export const MEDIA_COLS = 'id,name,alt,width,height,bytes,created_at,focus_x,focus_y,kind,ai,updated_at'
 
-export const BUILTIN = 'harry-cut promo-spotkajmy promo-ambasador promo-zarezerwuj promo-wystawca promo-stoisko promo-partner brush-powder brushes-dark hands-brushes z-hair z-makeup z-nails z-cosmetology z-barber event-audience event-booth event-hall event-mic event-networking event-speaker event-stage expert-1 expert-2 expert-3 expert-4 expert-5 expert-6 hair-blowdry hero mc-blowdry mc-seminar mc-team nails-dark news-facial news-wash portrait-bun salon-modern salon-pink strip-show zone-barber zone-cosmetology zone-hair zone-nails'.split(' ')
+export const BUILTIN = 'promo-spotkajmy promo-ambasador promo-zarezerwuj promo-wystawca promo-stoisko promo-partner z-hair z-makeup z-nails z-cosmetology z-barber event-audience event-booth event-hall event-mic event-networking event-speaker event-stage expert-1 expert-2 expert-3 expert-4 expert-5 expert-6 hair-blowdry hero mc-blowdry mc-seminar mc-team nails-dark news-facial news-wash portrait-bun salon-modern salon-pink strip-show zone-barber zone-cosmetology zone-hair zone-nails'.split(' ')
 
 /** Adres miniatury w panelu (zdjęcia z biblioteki czytamy wprost z magazynu). */
 export function thumb(ref: string | undefined): string {

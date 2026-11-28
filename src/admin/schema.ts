@@ -131,7 +131,7 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
       { name: 'imgAlt', label: 'Opis zdjęcia (alt)', type: 'str' },
       btn('btn1', 'Przycisk główny (różowy)'), btn('btn2', 'Drugi przycisk'), { name: 'countdownLabel', label: 'Podpis odliczania', type: 't' },
     ],
-    make: () => ({ headline: TT('Spotkajmy się *w Rzeszowie*', 'See you *in Rzeszów*'), img: 'harry-cut', imgAlt: 'Harry Jefferson, ambasador Beauty & Hair Expo', countdownLabel: TT('Do otwarcia', 'Opens in'), btn1: { label: TT('Kup bilet', 'Buy a ticket'), link: 'page:tickets' }, btn2: { label: TT('Zostań wystawcą', 'Become an exhibitor'), link: 'page:exhibit' } }),
+    make: () => ({ headline: TT('Spotkajmy się *w Rzeszowie*', 'See you *in Rzeszów*'), img: '', imgAlt: '', countdownLabel: TT('Do otwarcia', 'Opens in'), btn1: { label: TT('Kup bilet', 'Buy a ticket'), link: 'page:tickets' }, btn2: { label: TT('Zostań wystawcą', 'Become an exhibitor'), link: 'page:exhibit' } }),
   },
   tickets: {
     label: 'Bilety — karty', group: 'Targi', icon: 'ticket', desc: 'Karty biletów z cenami', source: { label: 'Ceny i rodzaje edytujesz w „Bilety”', to: 'c/tickets' },
@@ -202,8 +202,9 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
     make: () => ({ items: [{ slot: `baner-${Math.random().toString(36).slice(2, 6)}`, wide: true }] }),
   },
   promo: {
-    label: 'Grafiki promocyjne', group: 'Podstawowe', icon: 'image', desc: 'Gotowe grafiki z kampanii: szeroka na komputer, pionowa na telefon',
+    label: 'Grafiki promocyjne', group: 'Podstawowe', icon: 'image', desc: 'Gotowe grafiki z kampanii (bez przycinania): szeroka na komputer, pionowa na telefon',
     fields: [
+      { name: 'heading', label: 'Ukryty nagłówek strony (H1) dla Google', type: 't', help: 'Wypełnij, gdy grafika jest pierwszym blokiem strony, np. „Beauty & Hair Expo Rzeszów 2028”.' },
       {
         name: 'items', label: 'Grafiki', type: 'list', title: (x) => x.alt?.pl || 'Grafika', make: () => ({ img: '', imgMobile: '', link: '', alt: T0() }),
         fields: [
@@ -227,7 +228,7 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
     ],
     make: () => ({
       rows: [TT('Beauty & Hair Expo · *Rzeszów 2028*', 'Beauty & Hair Expo · *Rzeszów 2028*'), TT('19–20 lutego · *ZEN.COM Expo*', '19–20 February · *ZEN.COM Expo*'), TT('Nie może Cię tu *zabraknąć*', 'You can’t *miss it*')],
-      img: 'harry-cut', speed: 38, dark: false, btn: { label: TT('Kup bilet', 'Buy a ticket'), link: 'page:tickets' },
+      img: '', speed: 38, dark: false, btn: { label: TT('Kup bilet', 'Buy a ticket'), link: 'page:tickets' },
     }),
   },
   social: {
@@ -251,7 +252,7 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
           { img: 'promo-zarezerwuj', link: '', caption: TT('Zarezerwuj ten weekend', 'Save the weekend') },
           { img: 'promo-ambasador', link: '', caption: TT('Poznaj ambasadora targów', 'Meet our ambassador') },
           { img: 'promo-stoisko', link: '', caption: TT('Twoja marka na Beauty & Hair Expo', 'Your brand at Beauty & Hair Expo') },
-          { img: 'hands-brushes', link: '', caption: TT('Pokaż swoją markę', 'Show your brand') },
+          { img: 'promo-ambasador', link: '', caption: TT('Dołącz do nas', 'Join us') },
         ] },
         { name: 'Facebook', handle: 'ohtargi.pl', url: 'https://facebook.com/', posts: [] },
       ],
@@ -265,6 +266,23 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
       { name: 'speed', label: 'Prędkość (sekundy na okrążenie)', type: 'num', half: true },
     ],
     make: () => ({ kicker: TT('Partnerzy i patroni', 'Partners and patrons'), tone: 'mono', speed: 40 }),
+  },
+  posters: {
+    label: 'Karty w stylu marki', group: 'Treść', icon: 'cards', desc: 'Plakaty jak grafiki kampanii: kursywa z różowym słowem, przycisk, bez zdjęć (opcjonalnie zdjęcie w tle)',
+    fields: [
+      ...HEAD,
+      {
+        name: 'items', label: 'Karty', type: 'list', title: (x) => x.title?.pl, make: () => ({ title: TT('Tytuł *wyróżnienie*', 'Title *accent*'), text: T0(), meta: T0(), cta: TT('Zobacz', 'See more'), link: '', dark: false, img: '' }),
+        fields: [
+          { name: 'title', label: 'Tytuł', type: 't', help: 'Słowo w *gwiazdkach* = różowa kursywa, np. Pokazy *na scenie*.' },
+          { name: 'text', label: 'Opis', type: 't' },
+          { name: 'meta', label: 'Podpis na dole (np. Scena główna)', type: 't', half: true }, { name: 'cta', label: 'Napis na przycisku', type: 't', half: true },
+          { name: 'link', label: 'Prowadzi do', type: 'link', half: true }, { name: 'dark', label: 'Ciemna karta (czekolada)', type: 'bool', half: true },
+          { name: 'img', label: 'Zdjęcie w tle (opcjonalnie)', type: 'img', help: 'Puste = sama typografia, jak na grafikach.' },
+        ],
+      },
+    ],
+    make: () => ({ ...head0('Program', 'Programme'), items: [] }),
   },
   highlights: {
     label: 'Co przygotowaliśmy', group: 'Treść', icon: 'cards', desc: 'Atrakcje: zdjęcie z plakietką, nadtytuł, tytuł i opis',
