@@ -16,3 +16,6 @@ assets/photos/*.jpg
 src/content/published.json
 public/m
 supabase/.temp/
+
+# grafiki marki od klientek (oryginały); na stronie są WebP w public/img
+assets/brand/*.png

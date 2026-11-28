@@ -1,7 +1,7 @@
 // Kształt treści strony. Ten sam JSON: wersja robocza w panelu → migawka po publikacji → build.
 import type { T } from '../i18n'
 
-export type Btn = { label: T; link: string; variant?: 'dark' | 'light' | 'outline' | 'gold' }
+export type Btn = { label: T; link: string; variant?: 'dark' | 'light' | 'outline' | 'gold' | 'pink' }
 
 export type EventInfo = {
   brand: string
@@ -120,6 +120,8 @@ export type SiteData = {
   pages: PageDoc[]
   edition?: { id: string; name: string; year: number } | null
   publishedAt?: string
+  /** pliki z biblioteki: [punkt kadru x %, y %, szerokość / wysokość, 'photo' | 'logo'] */
+  media?: Record<string, [number, number, number, string]>
 }
 
 /** Sekcje zależne od edycji (reszta jest wspólna). */

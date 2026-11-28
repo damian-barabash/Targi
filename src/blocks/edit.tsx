@@ -1,10 +1,10 @@
 // Edycja „na miejscu”: na stronie publicznej E/Im renderują zwykły tekst i zdjęcie,
 // w podglądzie panelu (EditCtx) tekst jest edytowalny, a kliknięcie zdjęcia otwiera bibliotekę mediów.
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, type CSSProperties, type ReactNode } from 'react'
 import { S } from '../content/site'
 import type { Block } from '../content/types'
 import { getIn } from '../lib/path'
-import { imgSet, imgSrc } from '../lib/img'
+import { imgMeta, imgSet, imgSrc } from '../lib/img'
 import { useLocale } from '../components/ui'
 
 export type EditApi = {
@@ -75,9 +75,13 @@ export function Im({ at, sizes = '(max-width: 800px) 100vw, 50vw', className, ea
   const ed = useEdit()
   const ref = String(getIn(S, at) ?? '')
   if (!ref) return ed ? <span className="e-noimg" data-im={at}>Dodaj zdjęcie</span> : null
+  // punkt kadru (twarz) z asystenta zdjęć; logotypy dostają proporcję do wyrównania optycznej wielkości
+  const m = imgMeta(ref)
+  const style = m ? (m.logo ? ({ '--ar': m.ar } as CSSProperties) : { objectPosition: `${m.x}% ${m.y}%` }) : undefined
   return (
     <img
-      className={className}
+      className={`${className ?? ''}${m?.logo ? ' is-logo' : ''}` || undefined}
+      style={style}
       src={imgSrc(ref)}
       srcSet={imgSet(ref, wide)}
       sizes={sizes}

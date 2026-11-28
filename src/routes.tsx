@@ -8,6 +8,30 @@ import PageView from './blocks/PageView'
 import { NotFound, PostPage, ZonePage } from './pages/Pages'
 import TicketPage from './pages/TicketPage'
 
+/**
+ * Po nowym wdrożeniu przeglądarka ze starym HTML-em (pamięć CDN ~10 min) może poprosić o nieistniejący
+ * plik danych trasy → zamiast białego ekranu przeładowujemy stronę raz, po cichu.
+ */
+function RouteError() {
+  if (typeof window !== 'undefined') {
+    const k = 'bhe-reload'
+    let once = false
+    try {
+      once = sessionStorage.getItem(k) === location.pathname
+      if (!once) sessionStorage.setItem(k, location.pathname)
+    } catch {}
+    if (!once) location.reload()
+  }
+  return (
+    <div style={{ padding: '120px 24px', textAlign: 'center', fontFamily: 'Georgia, serif' }}>
+      <p>Ładowanie strony nie powiodło się. / The page failed to load.</p>
+      <p>
+        <a href="/">ohtargi.pl</a>
+      </p>
+    </div>
+  )
+}
+
 type Page = { path: (l: Locale) => string; el: ReactElement; plain?: boolean }
 
 // Strony z panelu (systemowe i własne) + szablony stref i wpisów.
@@ -23,6 +47,7 @@ const site: RouteRecord[] = LOCALES.map((l) => {
   return {
     path: root,
     element: <Layout locale={l} />,
+    errorElement: <RouteError />,
     children: [
       ...pages.map((p) => {
         const handle = { alt: { pl: p.path('pl'), en: p.path('en') }, plain: p.plain }

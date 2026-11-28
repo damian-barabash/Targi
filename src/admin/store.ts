@@ -258,6 +258,8 @@ export async function loadContent(editionId: string) {
   site.event = { ...DEFAULT.event, ...site.event }
   site.pages.sort((a: PageDoc, b: PageDoc) => a.order - b.order)
   if (!site.pages.length) site.pages = DEFAULT.pages
+  // punkty kadru i proporcje plików z biblioteki (podgląd = to samo co strona po publikacji)
+  site.media = await rpc<Record<string, any>>('media_meta', {}).catch(() => ({}))
   const ed = state.editions.find((e) => e.id === editionId)
   site.edition = ed ? { id: ed.id, name: ed.name, year: ed.year } : null
   undoStack = []

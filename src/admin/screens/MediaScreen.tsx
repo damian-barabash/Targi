@@ -1,8 +1,9 @@
 // Biblioteka mediów — jak w WordPressie: siatka zdjęć, wgrywanie, opis alt, usuwanie.
 import { useState } from 'react'
-import { STORAGE, db, fmtDate } from '../api'
+import { db, fmtDate } from '../api'
 import { fail, toast, useStore } from '../store'
 import { BUILTIN, Uploader, deleteMedia, thumb, useMedia, type MediaRow } from '../media'
+import { FocusEditor, assistAll } from './MediaAssist'
 import { Btn, Card, Empty, Icon, Modal, PageHead, Spinner, Tabs, ask } from '../ui'
 
 export default function MediaScreen() {
@@ -12,6 +13,7 @@ export default function MediaScreen() {
   const [tab, setTab] = useState<'lib' | 'site'>('lib')
   const [q, setQ] = useState('')
   const [open, setOpen] = useState<MediaRow | null>(null)
+  const [assist, setAssist] = useState('')
   const used = JSON.stringify(site)
   const list = (rows ?? []).filter((r) => r.name.toLowerCase().includes(q.toLowerCase()))
   const total = (rows ?? []).reduce((s, r) => s + (r.bytes ?? 0), 0)
@@ -29,6 +31,21 @@ export default function MediaScreen() {
               <Icon n="search" s={15} />
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Szukaj po nazwie…" />
             </label>
+            {role !== 'reports' && rows && (
+              <Btn
+                icon="sparkle"
+                busy={!!assist}
+                title="Logotypy partnerów i wystawców: usuwa tło i przycina. Zdjęcia: szuka twarzy i ustawia kadr."
+                onClick={async () => {
+                  const r = await assistAll(rows, setAssist)
+                  setRows(r.rows)
+                  setAssist('')
+                  toast(r.logos || r.photos ? `Asystent: poprawione logotypy ${r.logos}, kadr ustawiony na ${r.photos} zdjęciach` : 'Asystent: wszystko już jest w porządku')
+                }}
+              >
+                {assist || 'Asystent: popraw wszystko'}
+              </Btn>
+            )}
           </div>
         )}
       </div>
@@ -52,9 +69,10 @@ export default function MediaScreen() {
           <div className="mgrid mgrid--lg">
             {list.map((r) => (
               <button key={r.id} className="mitem" onClick={() => setOpen(r)} title={r.name}>
-                <img src={thumb(`media:${r.id}`)} alt={r.alt || r.name} loading="lazy" />
+                <img src={thumb(`media:${r.id}`)} alt={r.alt || r.name} loading="lazy" className={r.kind === 'logo' ? 'is-logo' : ''} />
                 <span>{r.name}</span>
                 {used.includes(`media:${r.id}`) && <em>w użyciu</em>}
+                {r.kind === 'logo' ? <i className="mitem__ai">logo</i> : r.ai?.faces?.length ? <i className="mitem__ai">twarz</i> : null}
               </button>
             ))}
           </div>
@@ -94,7 +112,15 @@ export default function MediaScreen() {
           }
         >
           <div className="mdetail">
-            <img src={`${STORAGE}/${open.id}-1600.webp`} alt={open.alt} />
+            <FocusEditor
+              key={open.id}
+              row={open}
+              readOnly={role === 'reports'}
+              onChange={(r) => {
+                setRows((rs) => (rs?.some((x) => x.id === r.id) ? rs.map((x) => (x.id === r.id ? r : x)) : [r, ...(rs ?? [])]))
+                setOpen(r)
+              }}
+            />
             <div>
               <label className="ff__l">Nazwa</label>
               <input

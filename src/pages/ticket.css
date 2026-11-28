@@ -1,6 +1,6 @@
 /* Bilet online — w stylu strony: krem, grafit, złoto, linie włosowe. */
 .tk { min-height: 80svh; display: grid; place-items: start center; padding: clamp(96px, 12vw, 140px) 16px 64px; background: #f4f0ea; }
-.tk__card { width: min(460px, 100%); background: #fbf9f6; border-top: 3px solid #b79c6b; box-shadow: 0 24px 60px rgba(38, 34, 31, 0.12); }
+.tk__card { width: min(460px, 100%); background: #fbf9f6; border-top: 3px solid #e0054b; box-shadow: 0 24px 60px rgba(38, 34, 31, 0.12); }
 .tk__head { padding: 26px 26px 18px; border-bottom: 1px solid #e2d9cb; }
 .tk__mark { margin: 0; font-family: var(--sans); font-weight: 600; font-size: 40px; line-height: 1; letter-spacing: -0.06em; color: #26221f; }
 .tk__ed { margin: 10px 0 0; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #7d6139; }

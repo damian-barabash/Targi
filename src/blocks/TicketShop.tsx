@@ -237,7 +237,7 @@ export default function TicketShop({ at, p }: BP) {
             </ul>
             <label className="field sum__promo">
               <span className="field__label">{pl ? 'Kod rabatowy' : 'Promo code'}</span>
-              <input name="promo" placeholder="BEAUTY28" />
+              <input name="promo" placeholder={l === "pl" ? "Kod rabatowy" : "Promo code"} />
             </label>
             <p className="sum__total">
               <span>{pl ? 'Razem' : 'Total'}</span>

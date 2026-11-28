@@ -2,6 +2,8 @@ import { ViteReactSSG } from 'vite-react-ssg'
 import '@fontsource-variable/instrument-sans/index.css'
 import '@fontsource-variable/newsreader/opsz.css'
 import '@fontsource-variable/newsreader/opsz-italic.css'
+import '@fontsource-variable/playfair-display/wght.css'
+import '@fontsource-variable/playfair-display/wght-italic.css'
 import './styles/global.css'
 import { routes } from './routes'
 

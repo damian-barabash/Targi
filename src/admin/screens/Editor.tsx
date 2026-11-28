@@ -125,7 +125,7 @@ export default function Editor({ pageId }: { pageId: string }) {
         if (m.id) setTab('block')
       } else if (m.t === 'act') act(m.act, m.id)
       else if (m.t === 'pick') {
-        const r = await pickMedia(getIn(useStoreNow().site, m.path))
+        const r = await pickMedia(getIn(useStoreNow().site, m.path), /(^|\.)logo(Img)?$/.test(m.path) ? 'logo' : 'auto')
         if (r !== null) set(m.path, r)
       } else if (m.t === 'chrome') {
         if (await ask({ title: 'Przejść do „Menu i stopka”?', text: 'Zmiany na tej stronie zostają w wersji roboczej — nic nie przepadnie.', yes: 'Przejdź' })) go(m.to)

@@ -6,6 +6,7 @@ import { link, pageHref } from '../lib/link'
 import { trackVisit } from '../lib/track'
 import { LocaleCtx } from './ui'
 import Motion from './Motion'
+import { LogoRun } from '../blocks/blocks'
 
 export type RouteHandle = { alt: Record<Locale, string>; plain?: boolean }
 
@@ -63,7 +64,9 @@ export function Header({ locale: l, home }: { locale: Locale; home?: boolean }) 
           ))}
         </nav>
         <Link to={pageHref(l, 'home')} className={`hdr__logo ${!isHome || scrolled || open ? 'hdr__logo--on' : ''}`} aria-label={S.event.brand}>
-          {S.event.brand}
+          <span className="ohmark">
+            oh<b>!</b>targi.pl
+          </span>
         </Link>
         <div className="hdr__right">
           <nav className="hdr__nav" aria-label="Menu 2">
@@ -111,7 +114,10 @@ export function Header({ locale: l, home }: { locale: Locale; home?: boolean }) 
 
 /** Pas partnerów na każdej stronie — stałe miejsce na logotypy sponsorów. */
 export function PartnerStrip({ locale: l }: { locale: Locale }) {
-  const names = S.partners.slice(0, 3).flatMap((g) => g.items.map((x) => x.name))
+  const { pathname } = useLocation()
+  const items = S.partners.slice(0, 3).flatMap((g) => g.items ?? [])
+  // brak partnerów = brak paska; na stronie głównej i na stronie partnerów logotypy są już w treści
+  if (!items.length || /^\/(en\/)?$/.test(pathname) || /\/(partnerzy|partners)\/?$/.test(pathname)) return null
   return (
     <section className="pstrip wrap" aria-label={l === 'pl' ? 'Partnerzy' : 'Partners'}>
       <div className="pstrip__head">
@@ -120,13 +126,7 @@ export function PartnerStrip({ locale: l }: { locale: Locale }) {
           {l === 'pl' ? 'Zostań partnerem →' : 'Become a partner →'}
         </Link>
       </div>
-      <div className="pstrip__row">
-        {names.map((n, i) => (
-          <span key={n} className={`pstrip__logo ${i === 0 ? 'pstrip__logo--main' : ''}`}>
-            {n}
-          </span>
-        ))}
-      </div>
+      <LogoRun tone="mono" speed={36} tiers={3} />
     </section>
   )
 }
@@ -137,7 +137,12 @@ export function Footer({ locale: l }: { locale: Locale }) {
     <footer className="ftr wrap">
       <div className="ftr__top">
         <div className="ftr__brand">
-          <p className="ftr__logo">{EVENT.brand}</p>
+          <p className="ftr__logo">
+            <span className="ohmark">
+              oh<b>!</b>targi.pl
+            </span>
+            <span className="ftr__brand-name">{EVENT.brand}</span>
+          </p>
           <p className="ftr__meta">
             {t(EVENT.dates, l)}
             <br />

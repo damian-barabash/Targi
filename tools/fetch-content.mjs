@@ -35,6 +35,11 @@ if (URL && KEY && !process.env.CONTENT_DEFAULT) {
 const data = published?.pages?.length ? { ...DEFAULT, ...published } : DEFAULT
 data.settings = { ...DEFAULT.settings, ...data.settings }
 data.event = { ...DEFAULT.event, ...data.event }
+// z mapy plików zostają tylko te użyte na stronie (punkt kadru, proporcja, logo)
+if (data.media) {
+  const used = JSON.stringify({ ...data, media: null })
+  data.media = Object.fromEntries(Object.entries(data.media).filter(([id]) => used.includes(`media:${id}`)))
+}
 writeFileSync('src/content/published.json', JSON.stringify(data))
 
 // kopia zdjęć z biblioteki mediów

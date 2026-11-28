@@ -62,7 +62,7 @@ function TField({ path, area, placeholder }: { path: string; area?: boolean; pla
 function ImgField({ path }: { path: string }) {
   const v: string = useStore((s) => getIn(s.site, path)) ?? ''
   const pick = async () => {
-    const r = await pickMedia(v)
+    const r = await pickMedia(v, /(^|\.)logo(Img)?$/.test(path) ? 'logo' : 'auto')
     if (r !== null) set(path, r)
   }
   return (

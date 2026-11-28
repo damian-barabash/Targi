@@ -68,7 +68,7 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
       { name: 'facts', label: 'Fakty (etykieta + wartość)', type: 'list', fields: [{ name: 'k', label: 'Etykieta', type: 't', half: true }, { name: 'v', label: 'Wartość', type: 't', half: true }], title: (x) => x.k?.pl, make: () => ({ k: T0(), v: T0() }) },
       { name: 'img', label: 'Zdjęcie', type: 'img' },
       { name: 'reverse', label: 'Zdjęcie po lewej', type: 'bool' },
-      { name: 'btn', label: 'Przycisk', type: 'group', fields: [{ name: 'label', label: 'Napis', type: 't', half: true }, { name: 'link', label: 'Prowadzi do', type: 'link', half: true }, { name: 'variant', label: 'Styl', type: 'select', options: [{ value: 'dark', label: 'Ciemny' }, { value: 'gold', label: 'Złoty' }, { value: 'outline', label: 'Obrys' }] }] },
+      { name: 'btn', label: 'Przycisk', type: 'group', fields: [{ name: 'label', label: 'Napis', type: 't', half: true }, { name: 'link', label: 'Prowadzi do', type: 'link', half: true }, { name: 'variant', label: 'Styl', type: 'select', options: [{ value: 'pink', label: 'Różowy (główny)' }, { value: 'dark', label: 'Ciemny' }, { value: 'gold', label: 'Jasny różowy' }, { value: 'outline', label: 'Obrys' }] }] },
       btn('more', 'Link tekstowy'),
     ],
     make: () => ({ kicker: T0(), title: TT('Tytuł sekcji', 'Section title'), text: TT('Tekst sekcji.', 'Section text.'), list: [], facts: [], img: 'event-stage', reverse: false, btn: { label: T0(), link: '', variant: 'dark' }, more: { label: T0(), link: '' } }),
@@ -79,7 +79,7 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
     make: () => ({ title: TT('Tytuł', 'Title'), body: TT('Treść…', 'Content…') }),
   },
   band: {
-    label: 'Złoty pas z hasłem', group: 'Podstawowe', icon: 'band', desc: 'Pas na całą szerokość: hasło i dwa przyciski',
+    label: 'Pas z hasłem', group: 'Podstawowe', icon: 'band', desc: 'Pas na całą szerokość: hasło i dwa przyciski',
     fields: [{ name: 'kicker', label: 'Nadtytuł', type: 't' }, { name: 'text', label: 'Hasło', type: 'tarea' }, btn('btn1', 'Przycisk 1'), btn('btn2', 'Przycisk 2')],
     make: () => ({ kicker: T0(), text: TT('Hasło, które zostaje w głowie.', 'A line that sticks.'), btn1: { label: TT('Kup bilet', 'Buy a ticket'), link: 'page:tickets' }, btn2: { label: T0(), link: '' } }),
   },
@@ -90,7 +90,7 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
   },
   buttons: {
     label: 'Przyciski', group: 'Podstawowe', icon: 'button', desc: 'Jeden lub kilka przycisków na środku',
-    fields: [{ name: 'items', label: 'Przyciski', type: 'list', title: (x) => x.label?.pl, make: () => ({ label: TT('Przycisk', 'Button'), link: '', variant: 'dark' }), fields: [{ name: 'label', label: 'Napis', type: 't', half: true }, { name: 'link', label: 'Prowadzi do', type: 'link', half: true }, { name: 'variant', label: 'Styl', type: 'select', options: [{ value: 'dark', label: 'Ciemny' }, { value: 'gold', label: 'Złoty' }, { value: 'outline', label: 'Obrys' }, { value: 'link', label: 'Link tekstowy' }] }] }],
+    fields: [{ name: 'items', label: 'Przyciski', type: 'list', title: (x) => x.label?.pl, make: () => ({ label: TT('Przycisk', 'Button'), link: '', variant: 'dark' }), fields: [{ name: 'label', label: 'Napis', type: 't', half: true }, { name: 'link', label: 'Prowadzi do', type: 'link', half: true }, { name: 'variant', label: 'Styl', type: 'select', options: [{ value: 'pink', label: 'Różowy (główny)' }, { value: 'dark', label: 'Ciemny' }, { value: 'gold', label: 'Jasny różowy' }, { value: 'outline', label: 'Obrys' }, { value: 'link', label: 'Link tekstowy' }] }] }],
     make: () => ({ items: [{ label: TT('Przycisk', 'Button'), link: '', variant: 'dark' }] }),
   },
   tiles: {
@@ -124,9 +124,14 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
     make: () => ({ src: 'https://www.openstreetmap.org/export/embed.html?bbox=21.98%2C50.09%2C22.07%2C50.13&layer=mapnik&marker=50.1115%2C22.0225' }),
   },
   hero: {
-    label: 'Ekran powitalny', group: 'Targi', icon: 'star', desc: 'Logo, data i miejsce, dwa przyciski, odliczanie', source: { label: 'Logo: „Ustawienia strony”, data i miejsce: „Dane wydarzenia”', to: 'c/event' },
-    fields: [btn('btn1', 'Przycisk główny'), btn('btn2', 'Drugi przycisk'), { name: 'countdownLabel', label: 'Podpis odliczania', type: 't' }],
-    make: () => ({ countdownLabel: TT('Do otwarcia', 'Opens in'), btn1: { label: TT('Kup bilet', 'Buy a ticket'), link: 'page:tickets' }, btn2: { label: TT('Zostań wystawcą', 'Become an exhibitor'), link: 'page:exhibit' } }),
+    label: 'Ekran powitalny', group: 'Targi', icon: 'star', desc: 'Logo, hasło, zdjęcie ambasadora, przyciski i odliczanie', source: { label: 'Logo: „Ustawienia strony”, data i miejsce: „Dane wydarzenia”', to: 'c/event' },
+    fields: [
+      { name: 'headline', label: 'Hasło', type: 't', help: 'Słowo w *gwiazdkach* będzie różowe i pochylone, np. Spotkajmy się *w Rzeszowie*.' },
+      { name: 'img', label: 'Zdjęcie po prawej', type: 'img', help: 'Np. ambasador. Asystent sam ustawi kadr na twarz.' },
+      { name: 'imgAlt', label: 'Opis zdjęcia (alt)', type: 'str' },
+      btn('btn1', 'Przycisk główny (różowy)'), btn('btn2', 'Drugi przycisk'), { name: 'countdownLabel', label: 'Podpis odliczania', type: 't' },
+    ],
+    make: () => ({ headline: TT('Spotkajmy się *w Rzeszowie*', 'See you *in Rzeszów*'), img: 'harry-cut', imgAlt: 'Harry Jefferson, ambasador Beauty & Hair Expo', countdownLabel: TT('Do otwarcia', 'Opens in'), btn1: { label: TT('Kup bilet', 'Buy a ticket'), link: 'page:tickets' }, btn2: { label: TT('Zostań wystawcą', 'Become an exhibitor'), link: 'page:exhibit' } }),
   },
   tickets: {
     label: 'Bilety — karty', group: 'Targi', icon: 'ticket', desc: 'Karty biletów z cenami', source: { label: 'Ceny i rodzaje edytujesz w „Bilety”', to: 'c/tickets' },
@@ -153,8 +158,9 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
   },
   schedule: { label: 'Program — harmonogram', group: 'Targi', icon: 'calendar', desc: 'Program z podziałem na dni i strefy', source: { label: 'Program edytujesz w „Program”', to: 'c/program' }, fields: [], make: () => ({}) },
   partners: {
-    label: 'Partnerzy — logotypy', group: 'Targi', icon: 'heart', desc: 'Logotypy partnerów według poziomów', source: { label: 'Partnerów edytujesz w „Partnerzy”', to: 'c/partners' },
-    fields: [...HEAD, { name: 'compact', label: 'Tylko trzy pierwsze poziomy', type: 'bool' }], make: () => ({ ...head0('Partnerzy', 'Partners'), compact: true }),
+    label: 'Partnerzy — logotypy', group: 'Targi', icon: 'heart', desc: 'Logotypy według poziomów, zakładki z liczbami. Bez partnerów sekcja sama się ukrywa.', source: { label: 'Partnerów edytujesz w „Partnerzy”', to: 'c/partners' },
+    fields: [...HEAD, { name: 'compact', label: 'Tylko trzy pierwsze poziomy', type: 'bool', half: true }, { name: 'filter', label: 'Zakładki z liczbami (Wszyscy · Partner · Patron…)', type: 'bool', half: true }, ANCHOR],
+    make: () => ({ ...head0('Partnerzy', 'Partners'), compact: false, filter: true, anchor: '' }),
   },
   catalog: {
     label: 'Katalog wystawców', group: 'Targi', icon: 'book', desc: 'Lista wystawców z wyszukiwarką', source: { label: 'Wystawców edytujesz w „Wystawcy”', to: 'c/exhibitors' },
@@ -194,6 +200,87 @@ export const BLOCK_DEFS: Record<string, BlockDef> = {
     label: 'Banery partnerów', group: 'Formularze i reklama', icon: 'ad', desc: 'Rząd banerów z tłem (złoty, ciemny, zdjęcie)', source: { label: 'Kreacje i terminy ustawiasz w „Reklama”', to: 'ads' },
     fields: [{ name: 'items', label: 'Miejsca na banery', type: 'list', title: (x) => x.slot, make: () => ({ slot: `baner-${Math.random().toString(36).slice(2, 6)}`, wide: false }), fields: [{ name: 'slot', label: 'Nazwa miejsca', type: 'slot', half: true }, { name: 'wide', label: 'Na całą szerokość', type: 'bool', half: true }] }],
     make: () => ({ items: [{ slot: `baner-${Math.random().toString(36).slice(2, 6)}`, wide: true }] }),
+  },
+  promo: {
+    label: 'Grafiki promocyjne', group: 'Podstawowe', icon: 'image', desc: 'Gotowe grafiki z kampanii: szeroka na komputer, pionowa na telefon',
+    fields: [
+      {
+        name: 'items', label: 'Grafiki', type: 'list', title: (x) => x.alt?.pl || 'Grafika', make: () => ({ img: '', imgMobile: '', link: '', alt: T0() }),
+        fields: [
+          { name: 'img', label: 'Grafika (komputer)', type: 'img', half: true, help: 'Np. baner 3:1 albo plakat 4:5.' },
+          { name: 'imgMobile', label: 'Grafika na telefon (opcjonalnie)', type: 'img', half: true, help: 'Najlepiej pion 4:5. Puste = ta sama co na komputer.' },
+          { name: 'link', label: 'Prowadzi do', type: 'link', half: true },
+          { name: 'alt', label: 'Tekst z grafiki (dla Google i niewidomych)', type: 't', half: true },
+        ],
+      },
+    ],
+    make: () => ({ items: [{ img: 'promo-spotkajmy', imgMobile: 'promo-ambasador', link: 'page:tickets', alt: TT('Spotkajmy się w Rzeszowie — Beauty & Hair Expo, 19–20 lutego 2028', 'See you in Rzeszów — Beauty & Hair Expo, 19–20 February 2028') }] }),
+  },
+  marquee: {
+    label: 'Ruchome napisy', group: 'Podstawowe', icon: 'band', desc: 'Przesuwające się hasła na tle zdjęcia (np. ambasador)',
+    fields: [
+      { name: 'rows', label: 'Wiersze napisów', type: 'list', plainT: true, make: T0, help: 'Każdy wiersz jedzie w swoją stronę. *Gwiazdki* = różowa kursywa.' },
+      { name: 'img', label: 'Zdjęcie w tle', type: 'img', half: true },
+      { name: 'speed', label: 'Prędkość (sekundy na okrążenie, im mniej, tym szybciej)', type: 'num', half: true },
+      { name: 'dark', label: 'Ciemne tło', type: 'bool', half: true },
+      btn('btn', 'Przycisk (opcjonalnie)'),
+    ],
+    make: () => ({
+      rows: [TT('Beauty & Hair Expo · *Rzeszów 2028*', 'Beauty & Hair Expo · *Rzeszów 2028*'), TT('19–20 lutego · *ZEN.COM Expo*', '19–20 February · *ZEN.COM Expo*'), TT('Nie może Cię tu *zabraknąć*', 'You can’t *miss it*')],
+      img: 'harry-cut', speed: 38, dark: false, btn: { label: TT('Kup bilet', 'Buy a ticket'), link: 'page:tickets' },
+    }),
+  },
+  social: {
+    label: 'Social media', group: 'Treść', icon: 'heart', desc: 'Przełącznik Instagram / Facebook i wybrane posty',
+    fields: [
+      { name: 'kicker', label: 'Nadtytuł', type: 't', half: true }, { name: 'title', label: 'Tytuł', type: 't', half: true },
+      {
+        name: 'networks', label: 'Serwisy (pierwsze dwa są w przełączniku)', type: 'list', title: (x) => x.name, make: () => ({ name: 'Instagram', handle: '@ohtargi', url: 'https://instagram.com/', posts: [] }),
+        fields: [
+          { name: 'name', label: 'Nazwa', type: 'select', half: true, options: [{ value: 'Instagram', label: 'Instagram' }, { value: 'Facebook', label: 'Facebook' }, { value: 'TikTok', label: 'TikTok' }] },
+          { name: 'handle', label: 'Nazwa profilu (np. @ohtargi)', type: 'str', half: true },
+          { name: 'url', label: 'Adres profilu', type: 'str' },
+          { name: 'posts', label: 'Posty (do 4)', type: 'list', title: (x) => x.caption?.pl || 'Post', make: () => ({ img: '', link: '', caption: T0() }), fields: [{ name: 'img', label: 'Zdjęcie posta', type: 'img', half: true }, { name: 'link', label: 'Link do posta', type: 'str', half: true }, { name: 'caption', label: 'Podpis', type: 't' }] },
+        ],
+      },
+    ],
+    make: () => ({
+      kicker: TT('Social media', 'Social media'), title: TT('Zobacz nasze *socjale*', 'See our *socials*'),
+      networks: [
+        { name: 'Instagram', handle: '@ohtargi', url: 'https://instagram.com/', posts: [
+          { img: 'promo-zarezerwuj', link: '', caption: TT('Zarezerwuj ten weekend', 'Save the weekend') },
+          { img: 'promo-ambasador', link: '', caption: TT('Poznaj ambasadora targów', 'Meet our ambassador') },
+          { img: 'promo-stoisko', link: '', caption: TT('Twoja marka na Beauty & Hair Expo', 'Your brand at Beauty & Hair Expo') },
+          { img: 'hands-brushes', link: '', caption: TT('Pokaż swoją markę', 'Show your brand') },
+        ] },
+        { name: 'Facebook', handle: 'ohtargi.pl', url: 'https://facebook.com/', posts: [] },
+      ],
+    }),
+  },
+  logoRun: {
+    label: 'Pasek logotypów (ruchomy)', group: 'Targi', icon: 'heart', desc: 'Logotypy partnerów jadą w pasku, w jednym tonie; kolor po najechaniu', source: { label: 'Partnerów edytujesz w „Partnerzy”', to: 'c/partners' },
+    fields: [
+      { name: 'kicker', label: 'Podpis nad paskiem', type: 't' },
+      { name: 'tone', label: 'Ton logotypów', type: 'select', half: true, options: [{ value: 'mono', label: 'Grafitowy (jednolity)' }, { value: 'pink', label: 'Różowy' }, { value: 'light', label: 'Jasny (na ciemnym tle)' }, { value: 'color', label: 'Oryginalne kolory' }] },
+      { name: 'speed', label: 'Prędkość (sekundy na okrążenie)', type: 'num', half: true },
+    ],
+    make: () => ({ kicker: TT('Partnerzy i patroni', 'Partners and patrons'), tone: 'mono', speed: 40 }),
+  },
+  highlights: {
+    label: 'Co przygotowaliśmy', group: 'Treść', icon: 'cards', desc: 'Atrakcje: zdjęcie z plakietką, nadtytuł, tytuł i opis',
+    fields: [
+      ...HEAD, TINT,
+      {
+        name: 'items', label: 'Atrakcje', type: 'list', title: (x) => x.title?.pl, make: () => ({ img: 'event-booth', badge: T0(), badgeSub: T0(), kicker: T0(), title: TT('Atrakcja', 'Attraction'), text: T0(), more: { label: T0(), link: '' } }),
+        fields: [
+          { name: 'img', label: 'Zdjęcie', type: 'img' },
+          { name: 'badge', label: 'Plakietka — tytuł', type: 't', half: true }, { name: 'badgeSub', label: 'Plakietka — podpis', type: 't', half: true },
+          { name: 'kicker', label: 'Nadtytuł', type: 't', half: true }, { name: 'title', label: 'Tytuł', type: 't', half: true },
+          { name: 'text', label: 'Opis', type: 'tarea' }, btn('more', 'Link'),
+        ],
+      },
+    ],
+    make: () => ({ ...head0('Program', 'Programme'), tint: false, items: [] }),
   },
 }
 

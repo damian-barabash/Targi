@@ -26,7 +26,7 @@ export function Arrow({ className = '' }: { className?: string }) {
 type BtnProps = {
   to: string
   children: ReactNode
-  variant?: 'dark' | 'light' | 'outline' | 'gold'
+  variant?: 'dark' | 'light' | 'outline' | 'gold' | 'pink'
   arrow?: boolean
   className?: string
 }
@@ -251,7 +251,7 @@ export function AdSlot({ slot, format = 'wide' }: { slot: string; format?: 'wide
       </div>
       <div className="ad__body">
         <span className="ad__label">
-          {label} · {format === 'wide' ? '1200 × 300' : '600 × 600'}
+          {label}
         </span>
         <E at={`${at}.brand`} className="ad__brand" />
         <E at={`${at}.claim`} className="ad__claim" />
@@ -279,7 +279,7 @@ export function BannerSlot({ slot, wide = false }: { slot: string; wide?: boolea
         </span>
       )}
       <span className="bnr__label">
-        {l === 'pl' ? 'Reklama' : 'Ad'} · {wide ? '1440 × 360' : '720 × 360'}
+        {l === 'pl' ? 'Reklama' : 'Ad'}
       </span>
       <E at={`${at}.kicker`} className="bnr__kicker" />
       <E at={`${at}.brand`} className="bnr__brand" />
